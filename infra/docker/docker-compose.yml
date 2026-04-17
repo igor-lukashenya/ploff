@@ -1,0 +1,61 @@
+# Docker Compose — Local Development
+#
+# Start:  make up   (or: docker compose -f infra/docker/docker-compose.yml up -d)
+# Stop:   make down (or: docker compose -f infra/docker/docker-compose.yml down)
+# Logs:   make logs
+#
+# TODO: Add your application services below.
+
+services:
+  # ─── Example: API Service ──────────────────────────────────────────────────
+  # api:
+  #   build:
+  #     context: ../../
+  #     dockerfile: infra/docker/Dockerfile.api
+  #   ports:
+  #     - "3000:3000"
+  #   environment:
+  #     - NODE_ENV=development
+  #     - DATABASE_URL=postgres://postgres:postgres@db:5432/app_dev
+  #   depends_on:
+  #     - db
+  #   volumes:
+  #     - ../../apps/api:/app/apps/api  # Hot reload
+
+  # ─── Example: Web Frontend ────────────────────────────────────────────────
+  # web:
+  #   build:
+  #     context: ../../
+  #     dockerfile: infra/docker/Dockerfile.web
+  #   ports:
+  #     - "8080:8080"
+  #   environment:
+  #     - API_URL=http://api:3000
+  #   depends_on:
+  #     - api
+
+  # ─── Example: Database ────────────────────────────────────────────────────
+  # db:
+  #   image: postgres:16-alpine
+  #   ports:
+  #     - "5432:5432"
+  #   environment:
+  #     POSTGRES_USER: postgres
+  #     POSTGRES_PASSWORD: postgres
+  #     POSTGRES_DB: app_dev
+  #   volumes:
+  #     - db-data:/var/lib/postgresql/data
+
+  # ─── Example: Redis Cache ─────────────────────────────────────────────────
+  # redis:
+  #   image: redis:7-alpine
+  #   ports:
+  #     - "6379:6379"
+
+  # Placeholder service (remove when adding real services)
+  placeholder:
+    image: alpine:latest
+    command: echo "TODO - Add your services to docker-compose.yml"
+
+# volumes:
+#   db-data:

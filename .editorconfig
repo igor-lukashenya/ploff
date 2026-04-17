@@ -1,0 +1,58 @@
+# EditorConfig — https://editorconfig.org
+root = true
+
+# Default for all files
+[*]
+charset = utf-8
+end_of_line = lf
+indent_style = space
+indent_size = 2
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# Markdown files — trailing spaces can be intentional (line breaks)
+[*.md]
+trim_trailing_whitespace = false
+
+# Makefiles require tabs
+[Makefile]
+indent_style = tab
+indent_size = 4
+
+[*.mk]
+indent_style = tab
+indent_size = 4
+
+# Python — PEP 8 recommends 4 spaces
+[*.py]
+indent_size = 4
+
+# C# / .NET
+[*.cs]
+indent_size = 4
+
+# Java
+[*.java]
+indent_size = 4
+
+# Go — tabs are standard
+[*.go]
+indent_style = tab
+indent_size = 4
+
+# YAML
+[*.{yml,yaml}]
+indent_size = 2
+
+# JSON
+[*.json]
+indent_size = 2
+insert_final_newline = false
+
+# Shell scripts
+[*.sh]
+end_of_line = lf
+
+# Windows scripts
+[*.{bat,cmd,ps1}]
+end_of_line = crlf

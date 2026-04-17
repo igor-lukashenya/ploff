@@ -1,0 +1,59 @@
+# Docker build context ignores
+# Applied when building Docker images from the repository root
+
+# Version control
+.git
+.gitignore
+
+# Documentation
+docs/
+*.md
+!README.md
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# CI/CD
+.github/
+.azure/
+
+# AI instructions
+.ai/
+CLAUDE.md
+
+# Environment files (secrets)
+.env
+.env.*
+!.env.example
+
+# Test artifacts
+coverage/
+test-results/
+*.lcov
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Terraform state (should never be in Docker images)
+**/.terraform/
+*.tfstate
+*.tfstate.*
+
+# Node.js
+**/node_modules/
+**/.next/
+**/.nuxt/
+
+# Python
+**/__pycache__/
+**/*.pyc
+**/.venv/
+**/venv/
+
+# .NET
+**/bin/
+**/obj/

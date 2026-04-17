@@ -1,0 +1,17 @@
+# Kustomize Overlay — Production Environment
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# resources:
+#   - ../../base
+
+# namespace: project-name-production
+
+# patches:
+#   - path: patches/replicas.yaml
+#   - path: patches/resources.yaml
+
+# images:
+#   - name: api
+#     newName: registry.example.com/api
+#     newTag: v1.0.0

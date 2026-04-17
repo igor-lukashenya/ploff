@@ -1,0 +1,117 @@
+# GitHub Actions — CI Pipeline
+#
+# Runs on every push and pull request to main/develop.
+# Builds and tests all applications in the monorepo.
+#
+# TODO: Customize for your specific apps and tech stack.
+
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # TODO: Add global environment variables here
+  CI: true
+
+jobs:
+  # ─── Detect Changes ────────────────────────────────────────────────────────
+  changes:
+    name: Detect Changes
+    runs-on: ubuntu-latest
+    outputs:
+      apps: ${{ steps.filter.outputs.changes }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            # TODO: Add your apps here. Each key becomes a job matrix entry.
+            # api:
+            #   - 'apps/api/**'
+            #   - 'packages/**'
+            # web:
+            #   - 'apps/web/**'
+            #   - 'packages/**'
+            infra:
+              - 'infra/**'
+            docs:
+              - 'docs/**'
+
+  # ─── Lint ──────────────────────────────────────────────────────────────────
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # TODO: Add linting steps for your tech stack
+      # Example for Node.js:
+      # - uses: actions/setup-node@v4
+      #   with:
+      #     node-version: '20'
+      # - run: npm ci
+      # - run: npm run lint
+
+      - name: Placeholder
+        run: echo "TODO - Add linting steps"
+
+  # ─── Test ──────────────────────────────────────────────────────────────────
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # TODO: Add test steps for your tech stack
+      # Example for Node.js:
+      # - uses: actions/setup-node@v4
+      #   with:
+      #     node-version: '20'
+      # - run: npm ci
+      # - run: npm test
+
+      - name: Placeholder
+        run: echo "TODO - Add test steps"
+
+  # ─── Build ─────────────────────────────────────────────────────────────────
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: [lint, test]
+    steps:
+      - uses: actions/checkout@v4
+
+      # TODO: Add build steps
+      # For Docker-based builds:
+      # - name: Build Docker images
+      #   run: make build-docker
+
+      - name: Placeholder
+        run: echo "TODO - Add build steps"
+
+  # ─── Docker Build (optional) ───────────────────────────────────────────────
+  # docker:
+  #   name: Docker Build
+  #   runs-on: ubuntu-latest
+  #   needs: [lint, test]
+  #   strategy:
+  #     matrix:
+  #       app: [api, web]  # TODO: List your apps
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - name: Build Docker image
+  #       run: |
+  #         docker build \
+  #           -f infra/docker/Dockerfile.${{ matrix.app }} \
+  #           -t ${{ matrix.app }}:${{ github.sha }} \
+  #           .

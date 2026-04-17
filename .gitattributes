@@ -1,0 +1,46 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Force specific file types to always use LF
+*.sh text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+*.js text eol=lf
+*.ts text eol=lf
+*.jsx text eol=lf
+*.tsx text eol=lf
+*.css text eol=lf
+*.html text eol=lf
+*.py text eol=lf
+*.rb text eol=lf
+*.go text eol=lf
+*.rs text eol=lf
+*.java text eol=lf
+*.cs text eol=lf
+*.tf text eol=lf
+*.hcl text eol=lf
+*.toml text eol=lf
+
+# Force batch scripts to use CRLF
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# Binary files
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.webp binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
+*.pdf binary
+*.zip binary
+*.tar.gz binary
+*.exe binary
+*.dll binary

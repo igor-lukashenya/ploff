@@ -1,0 +1,110 @@
+# .gitignore — Monorepo (Language-Agnostic)
+# ===========================================
+
+# ─── OS Files ────────────────────────────────
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ─── IDE / Editor ────────────────────────────
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+*.sublime-workspace
+*.sublime-project
+.project
+.classpath
+.settings/
+
+# ─── Environment & Secrets ───────────────────
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.cert
+
+# ─── Node.js ─────────────────────────────────
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-store/
+dist/
+build/
+.next/
+.nuxt/
+.turbo/
+
+# ─── Python ──────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+*.egg
+.venv/
+venv/
+env/
+.Python
+pip-log.txt
+pip-delete-this-directory.txt
+.tox/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+
+# ─── .NET / C# ──────────────────────────────
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+packages/
+*.nupkg
+
+# ─── Java / Kotlin ──────────────────────────
+target/
+*.class
+*.jar
+*.war
+*.ear
+
+# ─── Go ──────────────────────────────────────
+vendor/
+
+# ─── Rust ─────────────────────────────────────
+target/
+Cargo.lock
+
+# ─── Terraform ───────────────────────────────
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+crash.log
+
+# ─── Docker ──────────────────────────────────
+# Don't ignore Dockerfiles or compose files
+
+# ─── Coverage & Test Results ─────────────────
+coverage/
+*.lcov
+.nyc_output/
+test-results/
+junit*.xml
+
+# ─── Build Artifacts ─────────────────────────
+*.log
+*.tmp
+*.temp

@@ -1,0 +1,29 @@
+# CODEOWNERS — Define code ownership for pull request reviews
+#
+# Each line is a file pattern followed by one or more GitHub usernames or teams.
+# The last matching pattern takes precedence.
+#
+# Docs: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# ─── Default Owner (entire repo) ─────────────────────────────────────────────
+# TODO: Replace with your GitHub username or team
+# * @your-org/team-leads
+
+# ─── Applications ────────────────────────────────────────────────────────────
+# apps/api/                  @your-org/backend-team
+# apps/web/                  @your-org/frontend-team
+
+# ─── Shared Packages ────────────────────────────────────────────────────────
+# packages/                  @your-org/platform-team
+
+# ─── Infrastructure ─────────────────────────────────────────────────────────
+# infra/                     @your-org/devops-team
+# .github/workflows/         @your-org/devops-team
+# .azure/                    @your-org/devops-team
+
+# ─── Documentation ──────────────────────────────────────────────────────────
+# docs/                      @your-org/team-leads
+
+# ─── CI/CD ───────────────────────────────────────────────────────────────────
+# .github/workflows/         @your-org/devops-team
+# .azure/pipelines/          @your-org/devops-team

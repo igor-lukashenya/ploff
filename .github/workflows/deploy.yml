@@ -1,0 +1,123 @@
+# GitHub Actions — Deployment Pipeline
+#
+# Deploys applications to target environments.
+# Triggered manually or after CI passes on main.
+#
+# TODO: Configure for your deployment target (VPS, Azure, AWS, K8s, etc.)
+
+name: Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target environment'
+        required: true
+        type: choice
+        options:
+          - dev
+          - staging
+          - production
+      app:
+        description: 'Application to deploy (or "all")'
+        required: true
+        type: string
+        default: all
+
+  # Auto-deploy to dev on push to main (optional)
+  # push:
+  #   branches: [main]
+
+env:
+  # TODO: Configure registry and other deployment variables
+  # REGISTRY: ghcr.io/${{ github.repository }}
+  # IMAGE_TAG: ${{ github.sha }}
+  DEPLOY_ENV: ${{ github.event.inputs.environment || 'dev' }}
+
+jobs:
+  # ─── Deploy to VPS / VM (Docker Compose) ───────────────────────────────────
+  # Uncomment this section for VPS/VM deployments via SSH
+  #
+  # deploy-vps:
+  #   name: Deploy to VPS (${{ github.event.inputs.environment }})
+  #   runs-on: ubuntu-latest
+  #   environment: ${{ github.event.inputs.environment }}
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #
+  #     - name: Build and push Docker images
+  #       run: |
+  #         docker build -f infra/docker/Dockerfile.api -t $REGISTRY/api:$IMAGE_TAG .
+  #         docker push $REGISTRY/api:$IMAGE_TAG
+  #
+  #     - name: Deploy via SSH
+  #       uses: appleboy/ssh-action@v1
+  #       with:
+  #         host: ${{ secrets.DEPLOY_HOST }}
+  #         username: ${{ secrets.DEPLOY_USER }}
+  #         key: ${{ secrets.DEPLOY_SSH_KEY }}
+  #         script: |
+  #           cd /opt/${{ github.event.inputs.app }}
+  #           docker compose pull
+  #           docker compose up -d
+
+  # ─── Deploy to Kubernetes ──────────────────────────────────────────────────
+  # Uncomment this section for Kubernetes deployments
+  #
+  # deploy-k8s:
+  #   name: Deploy to K8s (${{ github.event.inputs.environment }})
+  #   runs-on: ubuntu-latest
+  #   environment: ${{ github.event.inputs.environment }}
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #
+  #     - name: Set up kubectl
+  #       uses: azure/setup-kubectl@v4
+  #
+  #     - name: Configure kubeconfig
+  #       run: echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
+  #
+  #     - name: Deploy with Kustomize
+  #       run: |
+  #         cd infra/kubernetes/overlays/${{ github.event.inputs.environment }}
+  #         kustomize edit set image api=$REGISTRY/api:$IMAGE_TAG
+  #         kubectl apply -k .
+
+  # ─── Deploy to Azure (App Service / AKS) ──────────────────────────────────
+  # Uncomment this section for Azure deployments
+  #
+  # deploy-azure:
+  #   name: Deploy to Azure (${{ github.event.inputs.environment }})
+  #   runs-on: ubuntu-latest
+  #   environment: ${{ github.event.inputs.environment }}
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #
+  #     - name: Azure Login
+  #       uses: azure/login@v2
+  #       with:
+  #         creds: ${{ secrets.AZURE_CREDENTIALS }}
+  #
+  #     - name: Deploy to Azure Container Apps
+  #       uses: azure/container-apps-deploy-action@v2
+  #       with:
+  #         resourceGroup: ${{ vars.AZURE_RESOURCE_GROUP }}
+  #         containerAppName: ${{ github.event.inputs.app }}
+  #         imageToDeploy: ${{ env.REGISTRY }}/${{ github.event.inputs.app }}:${{ env.IMAGE_TAG }}
+
+  # Placeholder job (remove when you uncomment a real deployment)
+  deploy-placeholder:
+    name: Deploy (${{ github.event.inputs.environment || 'dev' }})
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Placeholder
+        run: |
+          echo "TODO: Configure deployment for your target platform"
+          echo "Environment: ${{ github.event.inputs.environment || 'dev' }}"
+          echo "App: ${{ github.event.inputs.app || 'all' }}"
+          echo ""
+          echo "Uncomment one of the deployment jobs above:"
+          echo "  - deploy-vps: Docker Compose on VPS/VM via SSH"
+          echo "  - deploy-k8s: Kubernetes with Kustomize"
+          echo "  - deploy-azure: Azure Container Apps / AKS"
