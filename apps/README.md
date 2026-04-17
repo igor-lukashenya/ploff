@@ -66,7 +66,12 @@ apps/
        cd apps/<app-name> && <build-command>
    ```
 
-7. **Add CI/CD configuration** if the app should be built/deployed independently.
+7. **Add tests** following the [Testing Strategy](../docs/guides/testing.md):
+   - Unit tests for business logic
+   - Integration tests for database/API boundaries
+   - Wire test commands into `make test`
+
+8. **Add CI/CD configuration** if the app should be built/deployed independently.
 
 ## Conventions
 

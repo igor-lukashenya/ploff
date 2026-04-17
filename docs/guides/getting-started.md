@@ -61,5 +61,6 @@ See `apps/README.md` for step-by-step instructions on adding a new application.
 ## Next Steps
 
 - Read the [Development Guide](development.md) for day-to-day workflows
+- Read the [Testing Strategy](testing.md) for testing conventions and patterns
 - Read the [Deployment Guide](deployment.md) for deployment procedures
 - Review existing [Architecture Decision Records](../adr/) for context on past decisions

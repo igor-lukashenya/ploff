@@ -82,6 +82,7 @@ All infrastructure is defined as code. See [Infrastructure Guide](docs/guides/de
 
 - **ADRs**: Record architectural decisions in `docs/adr/`. See the [ADR template](docs/adr/000-template.md).
 - **Guides**: Developer onboarding and operational guides in `docs/guides/`.
+- **Testing**: Testing strategy and conventions in [Testing Strategy](docs/guides/testing.md).
 - **Release Notes**: Track releases in `docs/release-notes/`.
 
 ## CI/CD
