@@ -10,7 +10,7 @@
 
 **Date**: YYYY-MM-DD
 
-**Status**: Proposed | Accepted | Deprecated | Superseded by [NNN](NNN-title.md)
+**Status**: Proposed | Accepted | Deprecated | Superseded by [NNN](index.md)
 
 **Deciders**: List of people involved
 

@@ -12,7 +12,7 @@ git checkout -b feature/my-feature main
 git checkout -b fix/the-bug main
 ```
 
-See [CONTRIBUTING.md](../../CONTRIBUTING.md) for the full branching strategy.
+See [CONTRIBUTING.md](https://github.com) for the full branching strategy.
 
 ## Working on an App
 

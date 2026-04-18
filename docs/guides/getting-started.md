@@ -27,7 +27,7 @@ infra/          → Infrastructure as Code (Docker, K8s, Terraform)
 docs/           → Documentation (you are here)
 ```
 
-See the root [README.md](../../README.md) for the full structure.
+See the root [README.md](../index.md) for the full structure.
 
 ## Setup
 
@@ -68,4 +68,4 @@ See `apps/README.md` for step-by-step instructions on adding a new application.
 - Read the [Deployment Guide](deployment.md) for deployment procedures
 - Read the [Release Process](release-process.md) for versioning and release workflow
 - Read the [Git Hooks Guide](git-hooks.md) for pre-commit validation setup
-- Review existing [Architecture Decision Records](../adr/) for context on past decisions
+- Review existing [Architecture Decision Records](../adr/index.md) for context on past decisions

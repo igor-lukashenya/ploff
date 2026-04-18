@@ -64,6 +64,7 @@ nav:
   - Architecture Decisions:
       - adr/index.md
       - "ADR-001: Monorepo Structure": adr/001-monorepo-structure.md
+      - "ADR Template": adr/000-template.md
   - API: api/index.md
   - Release Notes: release-notes/CHANGELOG.md
 
