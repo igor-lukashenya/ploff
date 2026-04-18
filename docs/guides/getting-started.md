@@ -62,5 +62,8 @@ See `apps/README.md` for step-by-step instructions on adding a new application.
 
 - Read the [Development Guide](development.md) for day-to-day workflows
 - Read the [Testing Strategy](testing.md) for testing conventions and patterns
+- Read the [Observability Guide](observability.md) for logging, metrics, and tracing
 - Read the [Deployment Guide](deployment.md) for deployment procedures
+- Read the [Release Process](release-process.md) for versioning and release workflow
+- Read the [Git Hooks Guide](git-hooks.md) for pre-commit validation setup
 - Review existing [Architecture Decision Records](../adr/) for context on past decisions

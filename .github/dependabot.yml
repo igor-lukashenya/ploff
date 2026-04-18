@@ -1,0 +1,86 @@
+# Dependabot — Automated Dependency Updates
+#
+# Docs: https://docs.github.com/en/code-security/dependabot/dependabot-version-updates
+#
+# Dependabot creates PRs to keep dependencies up to date.
+# Customize the schedule and package ecosystems for your apps.
+
+version: 2
+
+updates:
+  # ─── GitHub Actions ────────────────────────────────────────────────────────
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    commit-message:
+      prefix: "ci"
+    labels:
+      - "dependencies"
+      - "ci"
+
+  # ─── Docker ────────────────────────────────────────────────────────────────
+  - package-ecosystem: "docker"
+    directory: "/infra/docker"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "build"
+    labels:
+      - "dependencies"
+      - "docker"
+
+  # ─── Terraform ─────────────────────────────────────────────────────────────
+  - package-ecosystem: "terraform"
+    directory: "/infra/terraform/environments/dev"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "infra"
+    labels:
+      - "dependencies"
+      - "infrastructure"
+
+  # ─── Application Dependencies ──────────────────────────────────────────────
+  # TODO: Add entries for each app's package ecosystem.
+  #
+  # Node.js (npm/yarn/pnpm):
+  # - package-ecosystem: "npm"
+  #   directory: "/apps/api"
+  #   schedule:
+  #     interval: "weekly"
+  #   commit-message:
+  #     prefix: "deps(api)"
+  #   labels:
+  #     - "dependencies"
+  #
+  # Python (pip):
+  # - package-ecosystem: "pip"
+  #   directory: "/apps/api"
+  #   schedule:
+  #     interval: "weekly"
+  #   commit-message:
+  #     prefix: "deps(api)"
+  #   labels:
+  #     - "dependencies"
+  #
+  # .NET (NuGet):
+  # - package-ecosystem: "nuget"
+  #   directory: "/apps/api"
+  #   schedule:
+  #     interval: "weekly"
+  #   commit-message:
+  #     prefix: "deps(api)"
+  #   labels:
+  #     - "dependencies"
+  #
+  # Go:
+  # - package-ecosystem: "gomod"
+  #   directory: "/apps/api"
+  #   schedule:
+  #     interval: "weekly"
+  #   commit-message:
+  #     prefix: "deps(api)"
+  #   labels:
+  #     - "dependencies"

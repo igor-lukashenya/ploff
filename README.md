@@ -109,6 +109,14 @@ Configuration for AI coding assistants:
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
+## Security
+
+See [SECURITY.md](SECURITY.md) for vulnerability reporting and security practices.
+
+## Code of Conduct
+
+See [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
+
 ## License
 
 See [LICENSE](LICENSE).

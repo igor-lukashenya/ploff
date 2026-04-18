@@ -1,0 +1,61 @@
+{
+  "name": "Monorepo Dev Container",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+    "ghcr.io/devcontainers/features/git:1": {},
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+
+    // TODO: Add features for your tech stack. Examples:
+    // "ghcr.io/devcontainers/features/node:1": { "version": "20" },
+    // "ghcr.io/devcontainers/features/python:1": { "version": "3.12" },
+    // "ghcr.io/devcontainers/features/dotnet:2": { "version": "8.0" },
+    // "ghcr.io/devcontainers/features/go:1": { "version": "1.22" },
+    // "ghcr.io/devcontainers/features/rust:1": {},
+    // "ghcr.io/devcontainers/features/terraform:1": {},
+    // "ghcr.io/devcontainers/features/kubectl-helm-minikube:1": {}
+  },
+
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "editor.formatOnSave": true,
+        "editor.rulers": [100],
+        "files.trimTrailingWhitespace": true,
+        "files.insertFinalNewline": true
+      },
+      "extensions": [
+        "EditorConfig.EditorConfig",
+        "GitHub.copilot",
+        "GitHub.copilot-chat",
+        "eamodio.gitlens",
+        "ms-azuretools.vscode-docker"
+
+        // TODO: Add extensions for your tech stack. Examples:
+        // "dbaeumer.vscode-eslint",
+        // "esbenp.prettier-vscode",
+        // "ms-python.python",
+        // "ms-dotnettools.csdevkit",
+        // "golang.Go",
+        // "rust-lang.rust-analyzer",
+        // "hashicorp.terraform",
+        // "ms-kubernetes-tools.vscode-kubernetes-tools"
+      ]
+    }
+  },
+
+  // Start Docker Compose services when the container starts
+  // "postCreateCommand": "make setup",
+  // "postStartCommand": "make up",
+
+  "forwardPorts": [
+    // TODO: Add ports your apps expose. Examples:
+    // 3000,   // API
+    // 8080,   // Web frontend
+    // 5432,   // PostgreSQL
+    // 6379    // Redis
+  ],
+
+  "remoteUser": "vscode"
+}
