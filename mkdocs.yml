@@ -1,0 +1,116 @@
+# MkDocs Material Configuration
+# Docs: https://squidfunk.github.io/mkdocs-material/
+#
+# Serve locally:  mkdocs serve
+# Build:          mkdocs build
+# Deploy:         mkdocs gh-deploy
+
+site_name: "Project Name"  # TODO: Replace with your project name
+site_description: "Project documentation"
+site_url: ""  # TODO: Set to your docs URL (e.g., https://your-org.github.io/your-repo)
+
+repo_url: ""  # TODO: Set to your repository URL
+repo_name: ""  # TODO: Set to your-org/your-repo
+
+# ─── Theme ───────────────────────────────────────────────────────────────────
+
+theme:
+  name: material
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.expand
+    - navigation.path
+    - navigation.top
+    - navigation.footer
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
+    - toc.follow
+  palette:
+    # Light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    # Dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  icon:
+    repo: fontawesome/brands/github
+
+# ─── Navigation ──────────────────────────────────────────────────────────────
+
+nav:
+  - Home: index.md
+  - Guides:
+      - Getting Started: guides/getting-started.md
+      - Development: guides/development.md
+      - Testing: guides/testing.md
+      - Deployment: guides/deployment.md
+      - Observability: guides/observability.md
+      - Release Process: guides/release-process.md
+      - Git Hooks: guides/git-hooks.md
+  - Architecture Decisions:
+      - adr/index.md
+      - "ADR-001: Monorepo Structure": adr/001-monorepo-structure.md
+  - API: api/index.md
+  - Release Notes: release-notes/CHANGELOG.md
+
+# ─── Markdown Extensions ─────────────────────────────────────────────────────
+
+markdown_extensions:
+  # Tables
+  - tables
+  # Syntax highlighting
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  # Task lists
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  # Admonitions (callouts)
+  - admonition
+  - pymdownx.details
+  # Content tabs
+  - pymdownx.tabbed:
+      alternate_style: true
+  # Table of contents
+  - toc:
+      permalink: true
+  # Emoji
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+# ─── Plugins ─────────────────────────────────────────────────────────────────
+
+plugins:
+  - search
+  # - tags  # Uncomment to enable tags
+
+# ─── Extra ───────────────────────────────────────────────────────────────────
+
+extra:
+  # Social links (shown in footer)
+  # social:
+  #   - icon: fontawesome/brands/github
+  #     link: https://github.com/your-org/your-repo
+  generator: false  # Remove "Made with Material for MkDocs" footer

@@ -7,6 +7,7 @@ Welcome to the project! This guide will help you set up your development environ
 - [Git](https://git-scm.com/) (2.x+)
 - [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/)
 - [Make](https://www.gnu.org/software/make/) (usually pre-installed on macOS/Linux; on Windows use WSL or install via `choco install make`)
+- [Python](https://www.python.org/) (3.9+) — for MkDocs documentation (`pip install mkdocs-material`)
 - Language-specific tools as needed by individual apps (see each app's README)
 
 ## Clone the Repository
@@ -51,7 +52,8 @@ make test              # Run all tests
 make lint              # Run all linters
 make build             # Build all applications
 make logs              # Tail logs from all services
-make clean             # Remove build artifacts
+make docs-serve         # Serve docs locally (http://localhost:8000)
+make docs-build         # Build static docs site
 ```
 
 ## Adding Your First App

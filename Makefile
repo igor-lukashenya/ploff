@@ -154,7 +154,13 @@ clean-docker: ## Remove all Docker containers, images, and volumes for this proj
 check: lint test ## Run lint and test (CI check)
 
 .PHONY: docs-serve
-docs-serve: ## Serve documentation locally (requires a docs tool)
-	@echo "$(BLUE)Serving docs...$(RESET)"
-	@# TODO: Add docs serving command (e.g., mkdocs serve, docsify serve)
-	@echo "$(YELLOW)No docs tool configured yet. See docs/README.md$(RESET)"
+docs-serve: ## Serve documentation locally (MkDocs Material)
+	mkdocs serve
+
+.PHONY: docs-build
+docs-build: ## Build documentation site
+	mkdocs build
+
+.PHONY: docs-deploy
+docs-deploy: ## Deploy docs to GitHub Pages
+	mkdocs gh-deploy --force
