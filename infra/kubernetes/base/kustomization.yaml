@@ -17,4 +17,4 @@ kind: Kustomization
 #   - ingress.yaml
 
 # commonLabels:
-#   app.kubernetes.io/part-of: project-name
+#   app.kubernetes.io/part-of: ploff

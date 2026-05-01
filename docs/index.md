@@ -1,15 +1,14 @@
-# Project Name
+# Project LiftOff 🚀
 
-> **TODO**: Replace with your project's overview.
-
-Welcome to the **Project Name** documentation. This monorepo contains all applications,
-shared packages, infrastructure code, and documentation.
+Welcome to the **Project LiftOff** documentation. A monorepo boilerplate — your launchpad
+for new projects, containing all applications, shared packages, infrastructure code,
+and documentation.
 
 ## Quick Start
 
 ```bash
 git clone <repo-url>
-cd <project-name>
+cd ploff
 make setup   # install dependencies
 make up      # start local environment
 make help    # see all commands

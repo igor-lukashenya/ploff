@@ -14,7 +14,7 @@ Welcome to the project! This guide will help you set up your development environ
 
 ```bash
 git clone <repo-url>
-cd <project-name>
+cd ploff
 ```
 
 ## Repository Overview

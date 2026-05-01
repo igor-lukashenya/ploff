@@ -1,8 +1,7 @@
-# Project Name
+# Project LiftOff 🚀
 
-> **TODO**: Replace `Project Name` with your actual project name.
-
-A monorepo containing all applications, shared packages, infrastructure code, and documentation for **Project Name**.
+A monorepo boilerplate — your launchpad for new projects. Contains everything you need:
+applications, shared packages, infrastructure code, and documentation.
 
 ## Repository Structure
 
@@ -29,7 +28,7 @@ A monorepo containing all applications, shared packages, infrastructure code, an
 ```bash
 # Clone the repository
 git clone <repo-url>
-cd <project-name>
+cd ploff
 
 # See all available commands
 make help

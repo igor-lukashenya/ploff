@@ -17,7 +17,7 @@
 
 # ─── Variables ───────────────────────────────────────────────────────────────
 
-PROJECT_NAME ?= project-name
+PROJECT_NAME ?= ploff
 DOCKER_COMPOSE := docker compose -f infra/docker/docker-compose.yml -p $(PROJECT_NAME)
 
 # Colors for terminal output
@@ -164,3 +164,20 @@ docs-build: ## Build documentation site
 .PHONY: docs-deploy
 docs-deploy: ## Deploy docs to GitHub Pages
 	mkdocs gh-deploy --force
+
+# ─── Scaffolding ─────────────────────────────────────────────────────────────
+
+.PHONY: new-app
+new-app: ## Scaffold a new app (usage: make new-app NAME=my-api)
+	@if [ -z "$(NAME)" ]; then echo "$(RED)Error: Set NAME (e.g., make new-app NAME=my-api)$(RESET)"; exit 1; fi
+	bash tools/scripts/new-app.sh $(NAME)
+
+.PHONY: new-package
+new-package: ## Scaffold a new shared package (usage: make new-package NAME=shared-utils)
+	@if [ -z "$(NAME)" ]; then echo "$(RED)Error: Set NAME (e.g., make new-package NAME=shared-utils)$(RESET)"; exit 1; fi
+	bash tools/scripts/new-package.sh $(NAME)
+
+.PHONY: new-adr
+new-adr: ## Create a new ADR (usage: make new-adr NAME=database-selection)
+	@if [ -z "$(NAME)" ]; then echo "$(RED)Error: Set NAME (e.g., make new-adr NAME=database-selection)$(RESET)"; exit 1; fi
+	bash tools/scripts/new-adr.sh $(NAME)

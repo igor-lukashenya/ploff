@@ -1,5 +1,5 @@
 {
-  "name": "Monorepo Dev Container",
+  "name": "Project LiftOff Dev Container",
   "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
 
   "features": {

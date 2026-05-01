@@ -1,6 +1,4 @@
-# Contributing to Project Name
-
-> **TODO**: Replace `Project Name` with your actual project name.
+# Contributing to Project LiftOff
 
 Thank you for contributing! This document outlines conventions and processes for contributing to this monorepo.
 

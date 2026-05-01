@@ -5,8 +5,8 @@
 # Build:          mkdocs build
 # Deploy:         mkdocs gh-deploy
 
-site_name: "Project Name"  # TODO: Replace with your project name
-site_description: "Project documentation"
+site_name: "Project LiftOff"
+site_description: "Monorepo boilerplate — your launchpad for new projects"
 site_url: ""  # TODO: Set to your docs URL (e.g., https://your-org.github.io/your-repo)
 
 repo_url: ""  # TODO: Set to your repository URL
@@ -73,6 +73,9 @@ nav:
 markdown_extensions:
   # Tables
   - tables
+  # Required for grid cards and HTML in markdown
+  - attr_list
+  - md_in_html
   # Syntax highlighting
   - pymdownx.highlight:
       anchor_linenums: true
