@@ -1,0 +1,44 @@
+# GitHub Actions - Deploy to Staging
+#
+# Auto-deploys to staging when a release branch is pushed/updated.
+# Release branches follow the pattern: release/<app>/<version>
+#
+# This enables QA to test on staging before production release.
+
+name: Deploy Staging
+
+on:
+  push:
+    branches:
+      - 'release/**'
+
+jobs:
+  # ---- Parse app name and version from branch ----
+  parse:
+    name: Parse Release Branch
+    runs-on: ubuntu-latest
+    outputs:
+      app: ${{ steps.parse.outputs.app }}
+      version: ${{ steps.parse.outputs.version }}
+    steps:
+      - name: Parse branch name
+        id: parse
+        run: |
+          # Branch: release/sample-api/v1.2.0 -> app=sample-api, version=1.2.0
+          BRANCH="${GITHUB_REF_NAME}"
+          APP=$(echo "$BRANCH" | cut -d'/' -f2)
+          VERSION=$(echo "$BRANCH" | cut -d'/' -f3 | sed 's/^v//')
+          echo "app=$APP" >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Detected: app=$APP version=$VERSION"
+
+  # ---- Deploy to staging ----
+  deploy:
+    name: Deploy to staging
+    needs: parse
+    uses: ./.github/workflows/deploy-app.yml
+    with:
+      app: ${{ needs.parse.outputs.app }}
+      version: ${{ needs.parse.outputs.version }}
+      environment: staging
+    secrets: inherit

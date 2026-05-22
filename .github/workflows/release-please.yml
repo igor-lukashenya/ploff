@@ -1,0 +1,66 @@
+# GitHub Actions - Release Please
+#
+# Automates versioning, changelogs, and GitHub Releases per app.
+# Creates separate Release PRs for each app based on Conventional Commits.
+#
+# Flow:
+#   1. Commits land on main with conventional format: feat(sample-api): ...
+#   2. Release Please opens/updates a Release PR per affected app
+#   3. PR bumps version in .csproj/package.json, updates CHANGELOG.md
+#   4. Merging the Release PR creates a git tag (e.g., sample-api/v1.2.0)
+#   5. Tag triggers the per-app deploy workflow
+
+name: Release Please
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    name: Release Please
+    runs-on: ubuntu-latest
+    outputs:
+      releases_created: ${{ steps.release.outputs.releases_created }}
+      # sample-api outputs
+      sample-api--release_created: ${{ steps.release.outputs['apps/sample-api--release_created'] }}
+      sample-api--tag_name: ${{ steps.release.outputs['apps/sample-api--tag_name'] }}
+      sample-api--version: ${{ steps.release.outputs['apps/sample-api--version'] }}
+      # sample-web outputs
+      sample-web--release_created: ${{ steps.release.outputs['apps/sample-web--release_created'] }}
+      sample-web--tag_name: ${{ steps.release.outputs['apps/sample-web--tag_name'] }}
+      sample-web--version: ${{ steps.release.outputs['apps/sample-web--version'] }}
+    steps:
+      - uses: googleapis/release-please-action@v4
+        id: release
+        with:
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+
+  # Deploy sample-api when released
+  deploy-sample-api:
+    name: Deploy sample-api
+    needs: release-please
+    if: needs.release-please.outputs['sample-api--release_created'] == 'true'
+    uses: ./.github/workflows/deploy-app.yml
+    with:
+      app: sample-api
+      version: ${{ needs.release-please.outputs['sample-api--version'] }}
+      environment: production
+    secrets: inherit
+
+  # Deploy sample-web when released
+  deploy-sample-web:
+    name: Deploy sample-web
+    needs: release-please
+    if: needs.release-please.outputs['sample-web--release_created'] == 'true'
+    uses: ./.github/workflows/deploy-app.yml
+    with:
+      app: sample-web
+      version: ${{ needs.release-please.outputs['sample-web--version'] }}
+      environment: production
+    secrets: inherit

@@ -1,0 +1,34 @@
+# Dockerfile for sample-api — Multi-stage build
+#
+# Build:  docker build -f infra/docker/Dockerfile.sample-api -t sample-api:latest .
+# Run:    docker run -p 8080:8080 sample-api:latest
+
+# ─── Build Stage ─────────────────────────────────────────────────────────────
+FROM mcr.microsoft.com/dotnet/sdk:10.0-preview AS build
+WORKDIR /src
+
+# Copy project file and restore (layer caching)
+COPY apps/sample-api/SampleApi.csproj apps/sample-api/
+RUN dotnet restore apps/sample-api/SampleApi.csproj
+
+# Copy source and build
+COPY apps/sample-api/ apps/sample-api/
+WORKDIR /src/apps/sample-api
+RUN dotnet publish -c Release -o /app/publish --no-restore
+
+# ─── Runtime Stage ───────────────────────────────────────────────────────────
+FROM mcr.microsoft.com/dotnet/aspnet:10.0-preview AS runtime
+WORKDIR /app
+
+# Install curl for health checks
+RUN apt-get update && apt-get install -y --no-install-recommends curl && rm -rf /var/lib/apt/lists/*
+
+COPY --from=build /app/publish .
+
+ENV ASPNETCORE_URLS=http://+:8080
+EXPOSE 8080
+
+HEALTHCHECK --interval=30s --timeout=5s --retries=3 --start-period=10s \
+    CMD curl -f http://localhost:8080/health || exit 1
+
+ENTRYPOINT ["dotnet", "SampleApi.dll"]

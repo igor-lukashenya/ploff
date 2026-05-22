@@ -1,6 +1,6 @@
-# Project LiftOff 🚀
+# Ploff
 
-Welcome to the **Project LiftOff** documentation. A monorepo boilerplate — your launchpad
+Welcome to the **Ploff** documentation. A monorepo boilerplate - your launchpad
 for new projects, containing all applications, shared packages, infrastructure code,
 and documentation.
 

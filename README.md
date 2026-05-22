@@ -1,6 +1,6 @@
-# Project LiftOff 🚀
+# Ploff
 
-A monorepo boilerplate — your launchpad for new projects. Contains everything you need:
+A monorepo boilerplate - your launchpad for new projects. Contains everything you need:
 applications, shared packages, infrastructure code, and documentation.
 
 ## Repository Structure

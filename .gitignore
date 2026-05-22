@@ -111,3 +111,7 @@ junit*.xml
 
 # ─── MkDocs ─────────────────────────────────
 site/
+
+# ─── CR3W / Pi Agent ─────────────────────────
+.pi/cr3w/
+.pi/sessions/

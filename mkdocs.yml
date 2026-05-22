@@ -5,8 +5,8 @@
 # Build:          mkdocs build
 # Deploy:         mkdocs gh-deploy
 
-site_name: "Project LiftOff"
-site_description: "Monorepo boilerplate — your launchpad for new projects"
+site_name: "Ploff"
+site_description: "Documentation for Ploff"
 site_url: ""  # TODO: Set to your docs URL (e.g., https://your-org.github.io/your-repo)
 
 repo_url: ""  # TODO: Set to your repository URL
