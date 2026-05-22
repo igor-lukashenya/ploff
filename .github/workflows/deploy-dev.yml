@@ -25,7 +25,7 @@ jobs:
       sample-api: ${{ steps.filter.outputs.sample-api }}
       sample-web: ${{ steps.filter.outputs.sample-web }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: dorny/paths-filter@v3
         id: filter
