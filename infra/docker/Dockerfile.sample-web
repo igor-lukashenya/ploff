@@ -13,6 +13,9 @@ FROM nginx:alpine AS production
 COPY --from=build /app/dist /usr/share/nginx/html
 COPY infra/docker/nginx-sample-web.conf /etc/nginx/templates/default.conf.template
 
+# Let the entrypoint expose the container's DNS resolver to the nginx config
+ENV NGINX_ENTRYPOINT_LOCAL_RESOLVERS=1
+
 # Backend that /api/* is proxied to (override at runtime)
 ENV API_UPSTREAM=http://sample-api:8080
 
