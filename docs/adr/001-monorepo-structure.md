@@ -2,7 +2,7 @@
 
 **Date**: 2026-04-18
 
-**Status**: Accepted
+**Status**: Accepted - task running, CI/CD platform and tooling amended by [ADR-003](003-monorepo-tooling.md)
 
 **Deciders**: Team
 
@@ -15,7 +15,8 @@ code, documentation, and CI/CD pipelines. We need a structure that:
 - Supports multiple deployable applications
 - Allows sharing code between applications
 - Keeps infrastructure and documentation alongside application code
-- Works with different CI/CD platforms (GitHub Actions, Azure DevOps)
+- Works with different CI/CD platforms (GitHub Actions, Azure DevOps - later narrowed to
+  GitHub Actions only, see ADR-003)
 - Supports different deployment targets (VPS, Kubernetes, Azure Cloud)
 - Is language-agnostic and does not impose a specific tech stack
 
@@ -31,11 +32,14 @@ We will use a **monorepo** structure with the following top-level directories:
 | `infra/` | Infrastructure as Code |
 | `docs/` | Documentation (ADRs, guides, release notes) |
 | `.github/` | GitHub Actions and GitHub-specific configuration |
-| `.azure/` | Azure DevOps pipeline definitions |
+| `.azure/` | Azure DevOps pipeline definitions (removed by ADR-003) |
 | `.ai/` | AI assistant instructions |
 
 We will use `Makefile` as a universal, language-agnostic task runner for common commands
 (build, test, lint, deploy).
+
+> **Amended by [ADR-003](003-monorepo-tooling.md):** tasks are orchestrated by moon; the
+> Makefile remains as a thin entry point.
 
 ## Consequences
 

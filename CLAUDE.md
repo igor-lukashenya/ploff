@@ -12,11 +12,11 @@ code, and documentation. The repository is language-agnostic and infrastructure-
 
 - `apps/` — Deployable applications (APIs, web apps, workers, services)
 - `packages/` — Shared internal libraries and packages
-- `tools/` — Developer scripts, generators, and utilities
+- `tools/` — Developer scripts and project generators (moon templates)
 - `infra/` — Infrastructure as Code (Docker, Kubernetes, Terraform)
 - `docs/` — Documentation (ADRs, guides, release notes)
 - `.github/` — GitHub Actions workflows, Copilot config, issue/PR templates
-- `.azure/` — Azure DevOps pipeline definitions
+- `.moon/` — moon workspace, toolchains and shared per-language tasks
 - `.ai/` — Shared AI assistant instructions and coding standards
 - `.claude/` — Claude Code project skills and settings
 
@@ -28,16 +28,19 @@ code, and documentation. The repository is language-agnostic and infrastructure-
 - Scope should be the app or package name (e.g., `api`, `web`, `shared-utils`)
 
 ### Code Organization
-- Each app in `apps/` is independently deployable and has its own build system
+- Each app in `apps/` is independently deployable and versioned, and is a moon project (`moon.yml`)
+- Apps may depend on `packages/`, never on other apps; declare dependencies in `dependsOn`
 - Shared code goes in `packages/`; never duplicate logic across apps
 - Infrastructure changes go in `infra/`, not in app directories
 - Architecture decisions must be recorded as ADRs in `docs/adr/`
 
 ### Build & Run
-- Use `make help` to see all available commands
+- Tasks are orchestrated by moon (see `docs/adr/003-monorepo-tooling.md`); `make help` lists commands
+- `make check` lints, type-checks and tests everything; `make ci` runs only affected tasks (like CI)
+- `make run APP=<project> TASK=<task>` runs one task (`build`, `test`, `lint`, `typecheck`, `format`, `publish`, `dev`)
 - `make up` starts the local Docker development environment
-- `make test` runs all tests across all apps
-- `make lint` runs all linters
+- New apps/packages: `make new-app STACK=<stack> NAME=<name>` / `make new-package ...` (`make stacks` lists stacks) - never hand-roll CI or Makefile entries
+- CI/CD is GitHub Actions only; scripts are Bash only
 
 ### Testing
 - Every app should have unit tests

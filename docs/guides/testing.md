@@ -165,10 +165,8 @@ REDIS_URL=redis://localhost:6379/1
 
 Tests run automatically in CI pipelines:
 
-- **GitHub Actions**: `.github/workflows/ci.yml` — lint + test on every PR
-- **Azure DevOps**: `.azure/pipelines/ci.yml` — lint + test stages
-
-Test results should be published in CI using JUnit XML format (supported by both platforms).
+- **GitHub Actions**: `.github/workflows/ci.yml` runs `moon ci`: lint, type-check and tests of
+  every affected project (and of projects depending on a changed package) on every PR
 
 ## Coverage
 

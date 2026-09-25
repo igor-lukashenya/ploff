@@ -13,14 +13,17 @@ This monorepo supports multiple deployment targets:
 | Azure Cloud | Terraform + Azure CLI | `infra/terraform/` |
 | Other Cloud | Terraform | `infra/terraform/` |
 
-## CI/CD Platforms
+## CI/CD Platform
 
-| Platform | Configuration | Docs |
-| --- | --- | --- |
-| GitHub Actions | `.github/workflows/` | [GitHub Actions docs](https://docs.github.com/en/actions) |
-| Azure DevOps | `.azure/pipelines/` | [Azure Pipelines docs](https://learn.microsoft.com/en-us/azure/devops/pipelines/) |
+CI/CD runs on GitHub Actions (`.github/workflows/`). All workflows are generic:
 
-Choose one based on your platform. Both are pre-configured with CI and deployment templates.
+- `deploy-app.yml` deploys one app: it runs `moon run <app>:test <app>:publish` and ships the
+  artifact in `apps/<app>/dist`. Replace its `Deploy` step with your target's commands.
+- `deploy-dev.yml` deploys every affected app tagged `deployable` (in `moon.yml`) on merge
+  to `main`, including apps that depend on a changed shared package.
+- `release-please.yml` deploys each app released by Release Please to production.
+
+See [ADR-003](../adr/003-monorepo-tooling.md).
 
 ## Environments
 
@@ -103,6 +106,5 @@ Choose one based on your platform. Both are pre-configured with CI and deploymen
 - Use environment variables for runtime secrets
 - Use your CI/CD platform's secret management:
   - GitHub Actions: Repository secrets / Environment secrets
-  - Azure DevOps: Variable groups / Azure Key Vault
 - For Kubernetes: Use Kubernetes Secrets or a secrets manager (e.g., Sealed Secrets, External Secrets)
 - For Terraform: Use variables marked as `sensitive = true` and store in a vault

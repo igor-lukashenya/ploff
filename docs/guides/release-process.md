@@ -72,11 +72,8 @@ git push origin v1.2.0
 The deployment pipeline can be triggered automatically by the tag, or manually:
 
 ```bash
-# GitHub Actions
-# Use the workflow_dispatch trigger or configure on tag push
-
-# Azure DevOps
-# Trigger the deploy pipeline with the target environment
+# GitHub Actions: run the "Deploy App" workflow (workflow_dispatch)
+# with the app name, version and target environment
 ```
 
 ### 6. Verify

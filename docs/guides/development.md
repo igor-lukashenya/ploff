@@ -16,28 +16,34 @@ See [CONTRIBUTING.md](https://github.com) for the full branching strategy.
 
 ## Working on an App
 
+Every project (app or package) is a [moon](https://moonrepo.dev) project with the same task
+names, whatever its stack: `build`, `test`, `lint`, `typecheck` (TypeScript), `format`,
+`publish` and `dev`.
+
 ```bash
-# Navigate to the app
-cd apps/<app-name>
+# Run the app's dev server
+make dev APP=<app-name>
 
-# Follow the app's README for specific setup/run instructions
+# Run one task of one app
+make run APP=<app-name> TASK=test
 
-# Run the whole stack locally
+# Run everything affected by your changes (the same check CI runs)
+make ci
+
+# Run the whole stack in Docker
 make up
-
-# Run just this app's tests
-cd apps/<app-name> && <test-command>
-
-# Run all tests
-make test
 ```
+
+moon caches task results: re-running a task whose inputs didn't change is instant. Use
+`moon run <app>:<task> --force` to bypass the cache.
 
 ## Working on a Shared Package
 
 When modifying code in `packages/`, remember:
-- Changes affect all consuming apps
-- Run tests for all consuming apps, not just the package
+- Changes affect all consuming apps: every app that lists the package in its `moon.yml`
+  `dependsOn` is rebuilt and retested by `make ci` and in CI, and redeployed to dev
 - Consider backward compatibility
+- `make graph` shows which projects depend on which
 
 ## Environment Variables
 
@@ -56,11 +62,12 @@ When modifying code in `packages/`, remember:
 ## Debugging
 
 ```bash
-# View Docker logs for a specific service
-docker compose -f infra/docker/docker-compose.yml logs -f <service-name>
+# View Docker logs for all services
+make logs
 
-# Shell into a running container
-docker compose -f infra/docker/docker-compose.yml exec <service-name> sh
+# Inspect a project's resolved configuration and tasks
+moon project <app-name>
+moon task <app-name>:build
 
 # Check container status
 make ps
@@ -70,6 +77,6 @@ make ps
 
 When making a significant architectural decision:
 
-1. Copy the template: `cp docs/adr/000-template.md docs/adr/NNN-short-title.md`
+1. Create it from the template: `make new-adr NAME=short-title`
 2. Fill in the sections
 3. Include the ADR in your PR
