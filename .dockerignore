@@ -1,5 +1,6 @@
 # Docker build context ignores
-# Applied when building Docker images from the repository root
+# Docker reads this file from the build context root. All images in
+# infra/docker/ are built with the repository root as context.
 
 # Version control
 .git
