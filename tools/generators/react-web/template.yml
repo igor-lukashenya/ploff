@@ -1,0 +1,19 @@
+# moon template - https://moonrepo.dev/docs/guides/codegen
+# Use via: make new-app STACK=react-web NAME=<name>
+title: 'React web app'
+description: 'React 19 + Vite + TypeScript SPA with TanStack Query, Vitest, nginx Dockerfile and compose fragment'
+destination: 'apps/[name]'
+
+variables:
+  name:
+    type: 'string'
+    required: true
+    prompt: 'App name (kebab-case)?'
+  port:
+    type: 'number'
+    default: 3000
+    prompt: 'Host port for local Docker Compose?'
+  api_upstream:
+    type: 'string'
+    default: 'http://api:8080'
+    prompt: 'Backend URL that /api/* is proxied to in Docker (compose service name)?'

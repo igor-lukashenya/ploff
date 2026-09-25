@@ -1,0 +1,23 @@
+using {{ name | pascal_case }};
+
+public class AppTests
+{
+    [Fact]
+    public void Run_WithVersionFlag_PrintsVersion()
+    {
+        var output = new StringWriter();
+
+        var exitCode = App.Run(["--version"], output);
+
+        Assert.Equal(0, exitCode);
+        Assert.StartsWith("{{ name }} ", output.ToString());
+    }
+
+    [Fact]
+    public void Run_WithoutArguments_Succeeds()
+    {
+        var exitCode = App.Run([], new StringWriter());
+
+        Assert.Equal(0, exitCode);
+    }
+}

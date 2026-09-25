@@ -1,0 +1,11 @@
+# moon template - https://moonrepo.dev/docs/guides/codegen
+# Use via: make new-package STACK=dotnet-library NAME=<name>
+title: '.NET library'
+description: 'Shared class library consumed by .NET apps via ProjectReference, with xUnit tests'
+destination: 'packages/[name]'
+
+variables:
+  name:
+    type: 'string'
+    required: true
+    prompt: 'Package name (kebab-case)?'

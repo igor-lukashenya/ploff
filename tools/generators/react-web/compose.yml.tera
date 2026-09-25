@@ -1,0 +1,17 @@
+---
+to: '../../infra/docker/compose.{{ name }}.yml'
+---
+# {{ name }} - loaded automatically by `make up` (see ../../Makefile)
+services:
+  {{ name }}:
+    build:
+      context: ../../
+      dockerfile: infra/docker/Dockerfile.{{ name }}
+    ports:
+      - "{{ port }}:80"
+    environment:
+      - API_UPSTREAM={{ api_upstream }}
+    # Uncomment to start after the backend is healthy:
+    # depends_on:
+    #   api:
+    #     condition: service_healthy

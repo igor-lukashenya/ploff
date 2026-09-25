@@ -1,0 +1,28 @@
+$schema: 'https://moonrepo.dev/schemas/moon.json'
+
+language: 'csharp'
+layer: 'tool'
+stack: 'backend'
+tags: ['dotnet']
+# Add the 'deployable' tag if this tool is deployed (e.g. as a scheduled job)
+
+project:
+  title: '{{ name }}'
+  description: 'TODO: Describe what this tool does'
+
+# Standard build/test/lint/format tasks are inherited from .moon/tasks/dotnet.yml
+tasks:
+  dev:
+    description: 'Run the tool locally (pass arguments with: moon run {{ name }}:dev -- <args>)'
+    command: 'dotnet run --project src/{{ name | pascal_case }} --'
+    options:
+      cache: false
+      runInCI: false
+
+  publish:
+    description: 'Produce the distributable artifact in dist/'
+    command: 'dotnet publish src/{{ name | pascal_case }}/{{ name | pascal_case }}.csproj -c Release --no-build -o dist'
+    deps:
+      - '~:build'
+    outputs:
+      - 'dist'

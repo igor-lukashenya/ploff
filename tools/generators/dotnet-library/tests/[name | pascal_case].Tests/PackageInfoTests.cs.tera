@@ -1,0 +1,10 @@
+using {{ name | pascal_case }};
+
+public class PackageInfoTests
+{
+    [Fact]
+    public void Name_MatchesPackageName()
+    {
+        Assert.Equal("{{ name }}", PackageInfo.Name);
+    }
+}

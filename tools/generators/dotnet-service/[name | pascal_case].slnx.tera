@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/{{ name | pascal_case }}/{{ name | pascal_case }}.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/{{ name | pascal_case }}.Tests/{{ name | pascal_case }}.Tests.csproj" />
+  </Folder>
+</Solution>

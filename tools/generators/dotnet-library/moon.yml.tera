@@ -1,0 +1,14 @@
+$schema: 'https://moonrepo.dev/schemas/moon.json'
+
+language: 'csharp'
+layer: 'library'
+stack: 'backend'
+tags: ['dotnet']
+
+project:
+  title: '{{ name }}'
+  description: 'TODO: Describe what this library provides'
+
+# Standard build/test/lint/format tasks are inherited from .moon/tasks/dotnet.yml.
+# Consumers declare `dependsOn: ['{{ name }}']` so moon rebuilds, retests and
+# redeploys them when this library changes.

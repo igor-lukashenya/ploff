@@ -1,0 +1,26 @@
+# {{ name }}
+
+> TODO: Describe what this tool does.
+
+.NET 10 console tool, generated from the `dotnet-console` template.
+
+## Commands
+
+Run from the repository root:
+
+| Command | Description |
+| --- | --- |
+| `moon run {{ name }}:dev -- --version` | Run locally with arguments |
+| `make run APP={{ name }} TASK=test` | Run tests |
+| `make run APP={{ name }} TASK=publish` | Publish to `dist/` |
+
+## Structure
+
+- `src/{{ name | pascal_case }}/App.cs` - tool logic (unit tested)
+- `src/{{ name | pascal_case }}/Program.cs` - thin entry point
+- `tests/{{ name | pascal_case }}.Tests/` - xUnit tests
+
+## Releases
+
+Versioned independently by Release Please. Use the `{{ name }}` scope in commits,
+e.g. `feat({{ name }}): add import command`.
