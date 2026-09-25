@@ -1,6 +1,6 @@
 # GitHub Actions - CI Pipeline
 #
-# Runs on every push and pull request to main/develop.
+# Runs on every push and pull request to main.
 # Uses change detection to only build/test affected apps.
 #
 # Add new apps:
@@ -12,9 +12,9 @@ name: CI
 
 on:
   push:
-    branches: [main, develop]
+    branches: [main]
   pull_request:
-    branches: [main, develop]
+    branches: [main]
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -73,7 +73,7 @@ jobs:
         run: dotnet restore
 
       - name: Check formatting
-        run: dotnet format --verify-no-changes --verbosity normal
+        run: dotnet format SampleApi.slnx --verify-no-changes --verbosity normal
 
       - name: Build
         run: dotnet build --no-restore -c Release
@@ -142,7 +142,7 @@ jobs:
           python-version: '3.x'
 
       - name: Install MkDocs
-        run: pip install mkdocs-material
+        run: pip install -r docs/requirements.txt
 
       - name: Build docs
         run: mkdocs build --strict
@@ -162,18 +162,24 @@ jobs:
           echo "  docs: ${{ needs.changes.outputs.docs }}"
           echo ""
 
-          # Fail if any required job failed
-          if [ "${{ needs.sample-api.result }}" = "failure" ]; then
+          # If change detection fails, every job is skipped - don't report success
+          if [ "${{ needs.changes.result }}" != "success" ]; then
+            echo "Change detection failed!"
+            exit 1
+          fi
+
+          # Fail if any required job failed or was cancelled
+          if [[ "${{ needs.sample-api.result }}" =~ ^(failure|cancelled)$ ]]; then
             echo "sample-api CI failed!"
             exit 1
           fi
 
-          if [ "${{ needs.sample-web.result }}" = "failure" ]; then
+          if [[ "${{ needs.sample-web.result }}" =~ ^(failure|cancelled)$ ]]; then
             echo "sample-web CI failed!"
             exit 1
           fi
 
-          if [ "${{ needs.docs.result }}" = "failure" ]; then
+          if [[ "${{ needs.docs.result }}" =~ ^(failure|cancelled)$ ]]; then
             echo "docs CI failed!"
             exit 1
           fi

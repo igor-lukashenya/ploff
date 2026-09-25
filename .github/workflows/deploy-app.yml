@@ -73,7 +73,12 @@ jobs:
         run: dotnet test apps/${{ inputs.app }} -c Release --no-build --verbosity normal
 
       - name: Publish
-        run: dotnet publish apps/${{ inputs.app }} -c Release -o publish/${{ inputs.app }} --no-build
+        # Publish the app project only - the app folder's .slnx also contains test projects
+        env:
+          APP: ${{ inputs.app }}
+        run: |
+          PROJECT=$(ls "apps/$APP"/*.csproj)
+          dotnet publish "$PROJECT" -c Release -o "publish/$APP" --no-build
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
