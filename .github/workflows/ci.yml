@@ -1,12 +1,11 @@
 # GitHub Actions - CI Pipeline
 #
 # Runs on every push and pull request to main.
-# Uses change detection to only build/test affected apps.
 #
-# Add new apps:
-#   1. Add path filter in the "changes" job
-#   2. Add a new build/test job below
-#   3. Add it to the ci-gate needs list
+# `moon ci` detects which projects are affected by the change (including projects
+# that depend on a changed shared package) and runs their build/lint/typecheck/test
+# tasks. Adding a new app or package requires NO changes to this file - only a
+# moon.yml in the project (see docs/adr/003-monorepo-tooling.md).
 
 name: CI
 
@@ -20,19 +19,51 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+  pull-requests: write # moon run report comment
+
 env:
   DOTNET_NOLOGO: true
   DOTNET_CLI_TELEMETRY_OPTOUT: true
 
 jobs:
-  # ---- Detect Changes ----
-  changes:
-    name: Detect Changes
+  # ---- Apps & packages (all stacks) ----
+  moon:
+    name: moon ci
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Full history is required for affected-project detection
+          fetch-depth: 0
+          filter: 'blob:none'
+
+      # .NET has no moon toolchain plugin; the SDK version comes from global.json
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      # Installs proto, moon and the tools pinned in .prototools (Node.js)
+      - uses: moonrepo/setup-toolchain@v0
+        with:
+          auto-install: true
+
+      # --include-relations + --downstream deep: when a shared package changes,
+      # also build/lint/test every project that depends on it (moon.yml dependsOn)
+      - name: Run affected tasks
+        run: moon ci --include-relations --downstream deep
+
+      - uses: moonrepo/run-report-action@v1
+        if: success() || failure()
+        with:
+          access-token: ${{ secrets.GITHUB_TOKEN }}
+
+  # ---- Docs: Build ----
+  docs-changes:
+    name: Detect docs changes
     runs-on: ubuntu-latest
     outputs:
-      sample-api: ${{ steps.filter.outputs.sample-api }}
-      sample-web: ${{ steps.filter.outputs.sample-web }}
-      infra: ${{ steps.filter.outputs.infra }}
       docs: ${{ steps.filter.outputs.docs }}
     steps:
       - uses: actions/checkout@v4
@@ -41,105 +72,21 @@ jobs:
         id: filter
         with:
           filters: |
-            sample-api:
-              - 'apps/sample-api/**'
-              - 'packages/**'
-            sample-web:
-              - 'apps/sample-web/**'
-              - 'packages/**'
-            infra:
-              - 'infra/**'
             docs:
               - 'docs/**'
               - 'mkdocs.yml'
 
-  # ---- Sample API: Lint + Test + Build ----
-  sample-api:
-    name: "sample-api"
-    needs: changes
-    if: needs.changes.outputs.sample-api == 'true'
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: apps/sample-api
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-dotnet@v4
-        with:
-          global-json-file: global.json
-
-      - name: Restore
-        run: dotnet restore
-
-      - name: Check formatting
-        run: dotnet format SampleApi.slnx --verify-no-changes --verbosity normal
-
-      - name: Build
-        run: dotnet build --no-restore -c Release
-
-      - name: Test
-        run: dotnet test --no-build -c Release --verbosity normal --logger "trx;LogFileName=test-results.trx"
-
-      - name: Upload test results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: test-results-sample-api
-          path: apps/sample-api/**/TestResults/*.trx
-
-  # ---- Sample Web: Lint + Test + Build ----
-  sample-web:
-    name: "sample-web"
-    needs: changes
-    if: needs.changes.outputs.sample-web == 'true'
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: apps/sample-web
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: 'npm'
-          cache-dependency-path: apps/sample-web/package-lock.json
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Lint
-        run: npm run lint
-
-      - name: Type check
-        run: npm run type-check
-
-      - name: Test
-        run: npm test
-
-      - name: Build
-        run: npm run build
-
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: sample-web-dist
-          path: apps/sample-web/dist
-          retention-days: 7
-
-  # ---- Docs: Build ----
   docs:
-    name: "docs"
-    needs: changes
-    if: needs.changes.outputs.docs == 'true'
+    name: docs
+    needs: docs-changes
+    if: needs.docs-changes.outputs.docs == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.x'
+          python-version: '3.12'
 
       - name: Install MkDocs
         run: pip install -r docs/requirements.txt
@@ -147,41 +94,24 @@ jobs:
       - name: Build docs
         run: mkdocs build --strict
 
-  # ---- CI Gate (required status check) ----
+  # ---- CI Gate (the single required status check) ----
   ci-gate:
     name: CI Gate
     runs-on: ubuntu-latest
     if: always()
-    needs: [changes, sample-api, sample-web, docs]
+    needs: [moon, docs-changes, docs]
     steps:
       - name: Check results
         run: |
-          echo "Changes detected:"
-          echo "  sample-api: ${{ needs.changes.outputs.sample-api }}"
-          echo "  sample-web: ${{ needs.changes.outputs.sample-web }}"
-          echo "  docs: ${{ needs.changes.outputs.docs }}"
-          echo ""
-
-          # If change detection fails, every job is skipped - don't report success
-          if [ "${{ needs.changes.result }}" != "success" ]; then
-            echo "Change detection failed!"
-            exit 1
-          fi
-
-          # Fail if any required job failed or was cancelled
-          if [[ "${{ needs.sample-api.result }}" =~ ^(failure|cancelled)$ ]]; then
-            echo "sample-api CI failed!"
-            exit 1
-          fi
-
-          if [[ "${{ needs.sample-web.result }}" =~ ^(failure|cancelled)$ ]]; then
-            echo "sample-web CI failed!"
-            exit 1
-          fi
-
-          if [[ "${{ needs.docs.result }}" =~ ^(failure|cancelled)$ ]]; then
-            echo "docs CI failed!"
-            exit 1
-          fi
-
-          echo "All checks passed!"
+          fail=0
+          for result in \
+            "moon=${{ needs.moon.result }}" \
+            "docs-changes=${{ needs.docs-changes.result }}" \
+            "docs=${{ needs.docs.result }}"; do
+            echo "$result"
+            # skipped is fine (nothing affected); failure/cancelled is not
+            if [[ "${result#*=}" =~ ^(failure|cancelled)$ ]]; then
+              fail=1
+            fi
+          done
+          exit $fail

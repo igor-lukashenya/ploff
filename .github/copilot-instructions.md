@@ -30,5 +30,7 @@ infrastructure code, and documentation.
 2. Shared code belongs in `packages/`
 3. Infrastructure changes go in `infra/`, not in app directories
 4. Every change should have tests
-5. Use `Makefile` as the universal task runner (`make help` for commands)
-6. Never commit secrets or credentials
+5. Tasks are orchestrated by moon; use the `Makefile` entry points (`make help`, `make check`,
+   `make run APP=<project> TASK=<task>`)
+6. Create new apps/packages with `make new-app` / `make new-package`, never by hand-editing CI
+7. Never commit secrets or credentials
