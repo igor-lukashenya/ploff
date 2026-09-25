@@ -1,6 +1,7 @@
 import { useApiInfo, useHealthCheck, useReadinessCheck } from '../hooks/useHealth';
 import { StatusBadge } from '@/shared/components';
 import { LoadingSpinner } from '@/shared/components';
+import { API_BASE_URL } from '@/services/api';
 import './HealthPage.css';
 
 export function HealthPage() {
@@ -63,7 +64,7 @@ export function HealthPage() {
           <h3>Connection</h3>
           <dl className="health-info">
             <dt>API URL</dt>
-            <dd><code>{import.meta.env.VITE_API_URL || 'http://localhost:8080'}</code></dd>
+            <dd><code>{API_BASE_URL}</code></dd>
             <dt>Last Checked</dt>
             <dd>{new Date().toLocaleTimeString()}</dd>
           </dl>
