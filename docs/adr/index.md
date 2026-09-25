@@ -13,6 +13,7 @@ onboarding and future discussions.
 | # | Title | Status | Date |
 |---|---|---|---|
 | [001](001-monorepo-structure.md) | Monorepo Structure | Accepted | 2026-04-18 |
+| [002](002-git-branching-strategy.md) | Git Branching Strategy | Accepted | 2026-05-22 |
 
 ## Creating a New ADR
 
