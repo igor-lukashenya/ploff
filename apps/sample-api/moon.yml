@@ -1,0 +1,25 @@
+$schema: 'https://moonrepo.dev/schemas/moon.json'
+
+language: 'csharp'
+layer: 'application'
+stack: 'backend'
+tags: ['deployable', 'dotnet']
+
+project:
+  title: 'Sample API'
+  description: '.NET 10 Minimal API sample service'
+
+# Standard build/test/lint/format tasks are inherited from .moon/tasks/dotnet.yml
+tasks:
+  dev:
+    description: 'Run the API locally'
+    command: 'dotnet run --project src/SampleApi'
+    preset: 'server'
+
+  publish:
+    description: 'Produce the deployable artifact in dist/'
+    command: 'dotnet publish src/SampleApi/SampleApi.csproj -c Release --no-build -o dist'
+    deps:
+      - '~:build'
+    outputs:
+      - 'dist'

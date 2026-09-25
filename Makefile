@@ -1,15 +1,17 @@
 # ============================================================================
-# Makefile - Universal Task Runner for Monorepo
+# Makefile - Entry point for common commands
 # ============================================================================
 #
+# Build, test, and lint tasks are orchestrated by moon (https://moonrepo.dev),
+# which knows every project in apps/ and packages/ and only runs what is needed.
+# This Makefile is a thin, discoverable wrapper - see docs/adr/003-monorepo-tooling.md.
+#
 # Usage:
-#   make help          Show all available commands
-#   make setup         Install dependencies for all apps
-#   make build         Build all apps
-#   make test          Run all tests
-#   make lint          Run all linters
-#   make up            Start local development environment
-#   make down          Stop local development environment
+#   make help                       Show all available commands
+#   make setup                      Install toolchains and dependencies
+#   make check                      Lint + typecheck + test everything
+#   make run APP=sample-api TASK=dev   Run any task of one project
+#   make new-app STACK=dotnet-service NAME=orders
 #
 # ============================================================================
 
@@ -18,7 +20,10 @@
 # ---- Variables ----
 
 PROJECT_NAME ?= ploff
-DOCKER_COMPOSE := docker compose -f infra/docker/docker-compose.yml -p $(PROJECT_NAME)
+# Base file (shared infra) + one compose.<app>.yml fragment per app
+COMPOSE_FILES := infra/docker/docker-compose.yml $(sort $(wildcard infra/docker/compose.*.yml))
+DOCKER_COMPOSE := docker compose $(addprefix -f ,$(COMPOSE_FILES)) -p $(PROJECT_NAME)
+MOON := moon
 
 # Colors for terminal output
 BLUE   := \033[36m
@@ -38,92 +43,74 @@ help: ## Show this help message
 		awk 'BEGIN {FS = ":.*?## "}; {printf "  $(GREEN)%-20s$(RESET) %s\n", $$1, $$2}'
 	@echo ""
 
-# ---- Setup & Dependencies ----
+# ---- Setup ----
 
 .PHONY: setup
-setup: ## Install all dependencies
-	@echo "$(BLUE)Installing dependencies...$(RESET)"
-	cd apps/sample-api && dotnet restore
-	cd apps/sample-web && npm install
-	@echo "$(GREEN)Dependencies installed.$(RESET)"
+setup: ## Install pinned toolchains (.prototools) and project dependencies
+	@command -v proto >/dev/null 2>&1 || { \
+		echo "$(RED)proto is not installed.$(RESET) Install it, then re-run 'make setup':"; \
+		echo "  curl -fsSL https://moonrepo.dev/install/proto.sh | bash"; \
+		echo "See docs/guides/getting-started.md"; exit 1; }
+	proto install
+	$(MOON) setup
+	$(MOON) sync
+	@echo "$(GREEN)Toolchains ready. Run 'make check' to verify.$(RESET)"
 
-.PHONY: setup-api
-setup-api: ## Install sample-api dependencies
-	cd apps/sample-api && dotnet restore
-
-.PHONY: setup-web
-setup-web: ## Install sample-web dependencies
-	cd apps/sample-web && npm install
-
-# ---- Build ----
+# ---- Build / Test / Lint (all projects) ----
 
 .PHONY: build
-build: build-api build-web ## Build all applications
+build: ## Build all projects
+	$(MOON) run :build
 
-.PHONY: build-api
-build-api: ## Build sample-api
-	@echo "$(BLUE)Building sample-api...$(RESET)"
-	cd apps/sample-api && dotnet build --no-restore
-	@echo "$(GREEN)sample-api built.$(RESET)"
+.PHONY: test
+test: ## Run all tests
+	$(MOON) run :test
 
-.PHONY: build-web
-build-web: ## Build sample-web
-	@echo "$(BLUE)Building sample-web...$(RESET)"
-	cd apps/sample-web && npm run build
-	@echo "$(GREEN)sample-web built.$(RESET)"
+.PHONY: lint
+lint: ## Run all linters
+	$(MOON) run :lint
+
+.PHONY: typecheck
+typecheck: ## Type-check all projects that support it
+	$(MOON) run :typecheck
+
+.PHONY: format
+format: ## Apply formatting fixes in all projects
+	$(MOON) run :format
+
+.PHONY: check
+check: ## Lint, type-check and test all projects (run before committing)
+	$(MOON) run :lint :typecheck :test
+
+.PHONY: ci
+ci: ## Run only tasks affected by your changes, incl. dependents (same as CI)
+	$(MOON) ci --include-relations --downstream deep
+
+# ---- Single project ----
+
+.PHONY: run
+run: ## Run a task of one project (usage: make run APP=sample-api TASK=dev)
+	@if [ -z "$(APP)" ] || [ -z "$(TASK)" ]; then echo "$(RED)Error: Set APP and TASK (e.g., make run APP=sample-api TASK=dev)$(RESET)"; exit 1; fi
+	$(MOON) run $(APP):$(TASK)
+
+.PHONY: dev
+dev: ## Start one project's dev server (usage: make dev APP=sample-web)
+	@if [ -z "$(APP)" ]; then echo "$(RED)Error: Set APP (e.g., make dev APP=sample-web)$(RESET)"; exit 1; fi
+	$(MOON) run $(APP):dev
+
+.PHONY: projects
+projects: ## List all projects in the workspace
+	$(MOON) projects
+
+.PHONY: graph
+graph: ## Open the interactive project dependency graph
+	$(MOON) project-graph
+
+# ---- Docker / Local Dev ----
 
 .PHONY: build-docker
 build-docker: ## Build all Docker images
-	@echo "$(BLUE)Building Docker images...$(RESET)"
 	$(DOCKER_COMPOSE) build
-	@echo "$(GREEN)Docker images built.$(RESET)"
-
-# ---- Test ----
-
-.PHONY: test
-test: test-api test-web ## Run all tests
-
-.PHONY: test-api
-test-api: ## Run sample-api tests
-	@echo "$(BLUE)Running sample-api tests...$(RESET)"
-	cd apps/sample-api && dotnet test --verbosity normal
-	@echo "$(GREEN)sample-api tests passed.$(RESET)"
-
-.PHONY: test-web
-test-web: ## Run sample-web tests
-	@echo "$(BLUE)Running sample-web tests...$(RESET)"
-	cd apps/sample-web && npm test
-	@echo "$(GREEN)sample-web tests passed.$(RESET)"
-
-.PHONY: test-web-watch
-test-web-watch: ## Run sample-web tests in watch mode
-	cd apps/sample-web && npm run test:watch
-
-# ---- Lint & Format ----
-
-.PHONY: lint
-lint: lint-api lint-web ## Run all linters
-
-.PHONY: lint-api
-lint-api: ## Lint sample-api
-	@echo "$(BLUE)Linting sample-api...$(RESET)"
-	cd apps/sample-api && dotnet format SampleApi.slnx --verify-no-changes --verbosity normal
-	@echo "$(GREEN)sample-api lint passed.$(RESET)"
-
-.PHONY: lint-web
-lint-web: ## Lint sample-web
-	@echo "$(BLUE)Linting sample-web...$(RESET)"
-	cd apps/sample-web && npm run lint
-	@echo "$(GREEN)sample-web lint passed.$(RESET)"
-
-.PHONY: format
-format: ## Format all code
-	@echo "$(BLUE)Formatting code...$(RESET)"
-	cd apps/sample-api && dotnet format SampleApi.slnx
-	cd apps/sample-web && npm run lint:fix
-	@echo "$(GREEN)Formatting complete.$(RESET)"
-
-# ---- Docker / Local Dev ----
 
 .PHONY: up
 up: ## Start local development environment (Docker Compose)
@@ -133,7 +120,6 @@ up: ## Start local development environment (Docker Compose)
 
 .PHONY: down
 down: ## Stop local development environment
-	@echo "$(BLUE)Stopping local environment...$(RESET)"
 	$(DOCKER_COMPOSE) down
 	@echo "$(YELLOW)Environment stopped.$(RESET)"
 
@@ -144,16 +130,6 @@ logs: ## Tail logs from all services
 .PHONY: ps
 ps: ## Show running containers
 	$(DOCKER_COMPOSE) ps
-
-# ---- Dev Servers ----
-
-.PHONY: dev-api
-dev-api: ## Run sample-api in development mode
-	cd apps/sample-api && dotnet run
-
-.PHONY: dev-web
-dev-web: ## Run sample-web dev server (Vite)
-	cd apps/sample-web && npm run dev
 
 # ---- Infrastructure ----
 
@@ -170,50 +146,42 @@ infra-apply: ## Run Terraform apply (requires TF_ENV)
 # ---- Clean ----
 
 .PHONY: clean
-clean: ## Remove build artifacts and temporary files
+clean: ## Remove build artifacts and moon cache
 	@echo "$(BLUE)Cleaning build artifacts...$(RESET)"
-	cd apps/sample-api && dotnet clean --verbosity quiet
-	rm -rf apps/sample-web/dist apps/sample-web/node_modules/.vite
+	find apps packages -type d \( -name bin -o -name obj -o -name dist \) -prune -exec rm -rf {} + 2>/dev/null || true
+	$(MOON) clean --lifetime '0 seconds'
 	@echo "$(GREEN)Clean complete.$(RESET)"
 
 .PHONY: clean-docker
 clean-docker: ## Remove all Docker containers, images, and volumes for this project
 	@echo "$(RED)Removing all Docker resources for $(PROJECT_NAME)...$(RESET)"
 	$(DOCKER_COMPOSE) down -v --rmi all --remove-orphans
-	@echo "$(GREEN)Docker resources removed.$(RESET)"
 
-# ---- Utilities ----
-
-.PHONY: check
-check: lint test ## Run lint and test (CI check)
-
-.PHONY: type-check
-type-check: ## Run TypeScript type checking for web apps
-	cd apps/sample-web && npm run type-check
+# ---- Docs ----
 
 .PHONY: docs-serve
-docs-serve: ## Serve documentation locally (MkDocs Material)
+docs-serve: ## Serve documentation locally (requires: pip install -r docs/requirements.txt)
 	mkdocs serve
 
 .PHONY: docs-build
 docs-build: ## Build documentation site
-	mkdocs build
-
-.PHONY: docs-deploy
-docs-deploy: ## Deploy docs to GitHub Pages
-	mkdocs gh-deploy --force
+	mkdocs build --strict
 
 # ---- Scaffolding ----
 
+.PHONY: stacks
+stacks: ## List available app/package generators
+	$(MOON) templates
+
 .PHONY: new-app
-new-app: ## Scaffold a new app (usage: make new-app NAME=my-api)
-	@if [ -z "$(NAME)" ]; then echo "$(RED)Error: Set NAME (e.g., make new-app NAME=my-api)$(RESET)"; exit 1; fi
-	bash tools/scripts/new-app.sh $(NAME)
+new-app: ## Scaffold a new app (usage: make new-app STACK=dotnet-service NAME=orders)
+	@if [ -z "$(STACK)" ] || [ -z "$(NAME)" ]; then echo "$(RED)Error: Set STACK and NAME (e.g., make new-app STACK=dotnet-service NAME=orders). See 'make stacks'.$(RESET)"; exit 1; fi
+	bash tools/scripts/new-project.sh app $(STACK) $(NAME)
 
 .PHONY: new-package
-new-package: ## Scaffold a new shared package (usage: make new-package NAME=shared-utils)
-	@if [ -z "$(NAME)" ]; then echo "$(RED)Error: Set NAME (e.g., make new-package NAME=shared-utils)$(RESET)"; exit 1; fi
-	bash tools/scripts/new-package.sh $(NAME)
+new-package: ## Scaffold a shared package (usage: make new-package STACK=dotnet-library NAME=shared-kernel)
+	@if [ -z "$(STACK)" ] || [ -z "$(NAME)" ]; then echo "$(RED)Error: Set STACK and NAME (e.g., make new-package STACK=dotnet-library NAME=shared-kernel). See 'make stacks'.$(RESET)"; exit 1; fi
+	bash tools/scripts/new-project.sh package $(STACK) $(NAME)
 
 .PHONY: new-adr
 new-adr: ## Create a new ADR (usage: make new-adr NAME=database-selection)

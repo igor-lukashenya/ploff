@@ -1,0 +1,16 @@
+# sample-api - loaded automatically by `make up` (see ../../Makefile)
+services:
+  sample-api:
+    build:
+      context: ../../
+      dockerfile: infra/docker/Dockerfile.sample-api
+    ports:
+      - "8080:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s

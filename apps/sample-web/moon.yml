@@ -1,0 +1,13 @@
+$schema: 'https://moonrepo.dev/schemas/moon.json'
+
+language: 'typescript'
+layer: 'application'
+stack: 'frontend'
+tags: ['deployable', 'react']
+
+project:
+  title: 'Sample Web'
+  description: 'React 19 + Vite web application'
+
+# Standard lint/typecheck/test/build/publish/dev tasks are inherited from
+# .moon/tasks/node.yml

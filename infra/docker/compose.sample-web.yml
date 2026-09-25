@@ -1,0 +1,13 @@
+# sample-web - loaded automatically by `make up` (see ../../Makefile)
+services:
+  sample-web:
+    build:
+      context: ../../
+      dockerfile: infra/docker/Dockerfile.sample-web
+    ports:
+      - "3000:80"
+    environment:
+      - API_UPSTREAM=http://sample-api:8080
+    depends_on:
+      sample-api:
+        condition: service_healthy
