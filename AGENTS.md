@@ -1,15 +1,10 @@
 # Ploff
 
-## Launch Model
-- Run Pi from this project root so sessions and `/resume` stay scoped.
-
-## Deep Project Context
-- Read `.pi/cr3w/context.md` for deeper project architecture and domain context.
-- Read `.pi/cr3w/workspace.yaml` for repo names and workspace mappings.
+Instructions for AI coding agents working in this repository. Tool-specific entry
+points (`CLAUDE.md`, `.github/copilot-instructions.md`) build on this file.
 
 ## Project Info
-- Customer: Personal (igor-lukashenya)
-- Tasks: GitHub Projects - https://github.com/igor-lukashenya/ploff/projects
+- Tasks: TODO - link your issue tracker / project board
 
 ## Repos
 | Module | Path | Tech |

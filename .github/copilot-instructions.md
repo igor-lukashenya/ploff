@@ -1,7 +1,7 @@
 # GitHub Copilot Instructions
-#
-# This file is automatically discovered by GitHub Copilot.
-# It provides repository-wide context for AI-assisted coding.
+
+Repository-wide instructions automatically loaded by GitHub Copilot.
+See also [`AGENTS.md`](../AGENTS.md) for project structure and conventions.
 
 ## Project Context
 

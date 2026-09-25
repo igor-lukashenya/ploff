@@ -13,7 +13,11 @@ Desktop.ini
 
 # ─── IDE / Editor ────────────────────────────
 .idea/
-.vscode/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/launch.json
+!.vscode/tasks.json
 *.swp
 *.swo
 *~
@@ -39,10 +43,10 @@ yarn-error.log*
 pnpm-debug.log*
 .pnpm-store/
 dist/
-build/
 .next/
 .nuxt/
 .turbo/
+*.tsbuildinfo
 
 # ─── Python ──────────────────────────────────
 __pycache__/
@@ -69,7 +73,6 @@ obj/
 *.suo
 *.userosscache
 *.sln.docstates
-packages/
 *.nupkg
 
 # ─── Java / Kotlin ──────────────────────────
@@ -79,12 +82,8 @@ target/
 *.war
 *.ear
 
-# ─── Go ──────────────────────────────────────
-vendor/
-
 # ─── Rust ─────────────────────────────────────
-target/
-Cargo.lock
+# target/ is already covered above (Java/Kotlin)
 
 # ─── Terraform ───────────────────────────────
 .terraform/
@@ -112,6 +111,5 @@ junit*.xml
 # ─── MkDocs ─────────────────────────────────
 site/
 
-# ─── CR3W / Pi Agent ─────────────────────────
-.pi/cr3w/
-.pi/sessions/
+# ─── Local AI agent state ────────────────────
+.pi/
