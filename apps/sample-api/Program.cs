@@ -4,10 +4,13 @@ builder.Services.AddHealthChecks();
 
 var app = builder.Build();
 
+// Version is managed by Release Please in SampleApi.csproj
+var version = typeof(Program).Assembly.GetName().Version?.ToString(3) ?? "unknown";
+
 app.MapGet("/", () => Results.Ok(new
 {
     name = "Sample API",
-    version = "1.0.0",
+    version,
     status = "running"
 }));
 
