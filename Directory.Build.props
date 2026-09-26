@@ -1,0 +1,18 @@
+<!--
+  Shared MSBuild settings for every .NET project in the repository
+  (apps, packages and generated projects inherit this file automatically).
+-->
+<Project>
+
+  <PropertyGroup>
+    <!--
+      NuGet audit: check direct and transitive packages against the GitHub Advisory
+      Database on restore, and fail the build on HIGH (NU1903) and CRITICAL (NU1904)
+      vulnerabilities. Lower severities stay warnings.
+    -->
+    <NuGetAudit>true</NuGetAudit>
+    <NuGetAuditMode>all</NuGetAuditMode>
+    <WarningsAsErrors>$(WarningsAsErrors);NU1903;NU1904</WarningsAsErrors>
+  </PropertyGroup>
+
+</Project>
