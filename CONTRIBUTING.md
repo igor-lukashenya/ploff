@@ -97,10 +97,15 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/). This is cri
 | `style` | None | Formatting, whitespace |
 | `refactor` | None | Code change that neither fixes nor adds |
 | `perf` | Patch | Performance improvement |
+| `revert` | Patch | Reverts a previous commit |
+| `deps` | Patch | Dependency updates (used by Dependabot) |
 | `test` | None | Adding/updating tests |
 | `build` | None | Build system or dependencies |
 | `ci` | None | CI/CD configuration |
 | `chore` | None | Maintenance tasks |
+
+The **Conventional Commits** check validates the PR title and every commit in a PR.
+Run it locally before pushing with `make check-commits`.
 
 ### Breaking Changes
 
