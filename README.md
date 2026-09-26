@@ -8,7 +8,7 @@ applications, shared packages, infrastructure code, and documentation.
 ```
 ├── apps/                  # Application projects (APIs, web apps, services)
 ├── packages/              # Shared libraries and packages
-├── tools/                 # Developer scripts, generators, utilities
+├── tools/                 # Developer scripts and project generators
 ├── infra/                 # Infrastructure as Code
 │   ├── docker/            # Docker configurations
 │   ├── kubernetes/        # Kubernetes manifests
@@ -18,10 +18,11 @@ applications, shared packages, infrastructure code, and documentation.
 │   ├── guides/            # Developer guides
 │   └── release-notes/     # Changelogs and release notes
 ├── .github/               # GitHub Actions, Copilot config, templates
-├── .azure/                # Azure DevOps pipeline definitions
 ├── .ai/                   # Shared AI assistant instructions
 ├── .claude/               # Claude Code skills and settings
-└── Makefile               # Common commands (universal task runner)
+├── .moon/                 # moon workspace, toolchains and shared tasks
+├── .prototools            # Pinned tool versions (moon, Node.js)
+└── Makefile               # Entry point for common commands
 ```
 
 ## Quick Start
@@ -31,41 +32,51 @@ applications, shared packages, infrastructure code, and documentation.
 git clone <repo-url>
 cd ploff
 
-# See all available commands
-make help
+# One-time: install proto (toolchain manager), then restart your shell
+curl -fsSL https://moonrepo.dev/install/proto.sh | bash
+
+# Install pinned toolchains and verify everything
+make setup
+make check
+
+# Add projects the solution needs
+make stacks
+make new-app STACK=dotnet-service NAME=orders
 
 # Start local development environment
 make up
-
-# Run all tests
-make test
-
-# Run linting
-make lint
 ```
+
+Builds, tests and CI are orchestrated by [moon](https://moonrepo.dev) - see
+[ADR-003](docs/adr/003-monorepo-tooling.md). Run `make help` for all commands.
 
 ## Key Conventions
 
 ### Applications (`apps/`)
 
-Each application lives in its own directory under `apps/`. An app is anything that gets deployed independently — APIs, web frontends, background workers, etc.
+Each application lives in its own directory under `apps/`. An app is anything with its own
+release cycle: APIs and microservices, web frontends, mobile apps, tools and jobs.
 
 ```
 apps/
-├── web/           # Frontend application
-├── api/           # Primary REST/GraphQL API
-├── api-admin/     # Admin API
-└── worker/        # Background job processor
+├── orders/        # Microservice      (make new-app STACK=dotnet-service NAME=orders)
+├── portal/        # Web frontend      (make new-app STACK=react-web NAME=portal)
+└── importer/      # CLI tool / job    (make new-app STACK=dotnet-console NAME=importer)
 ```
 
-Each app should have:
-- Its own `Dockerfile` (in `infra/docker/` or within the app)
-- Its own README with setup instructions
-- Its own build/test commands wired into the root `Makefile`
+Each app has:
+- A `moon.yml` (language, layer, tags, dependencies) and the standard tasks:
+  `build`, `test`, `lint`, `format`, `publish`, `dev`
+- Its own README, version (Release Please) and changelog
+- A Dockerfile and compose fragment in `infra/docker/` if it runs as a container
+
+See [apps/README.md](apps/README.md).
 
 ### Shared Packages (`packages/`)
 
-Shared code that is used by multiple apps. These are internal packages — not published to any registry.
+Shared code that is used by multiple apps. These are internal packages — not published to any
+registry. Apps declare them in `dependsOn`, so CI retests and redeploys dependents when a
+package changes. See [packages/README.md](packages/README.md).
 
 ```
 packages/
@@ -87,14 +98,18 @@ All infrastructure is defined as code. See [Infrastructure Guide](docs/guides/de
 
 ## CI/CD
 
-This repository supports two CI/CD approaches:
+GitHub Actions (`.github/workflows/`). The workflows are generic: no changes are needed when
+apps are added.
 
-| Approach | Configuration |
-| --- | --- |
-| **GitHub Actions** | `.github/workflows/` |
-| **Azure DevOps** | `.azure/pipelines/` |
+| Workflow | Trigger | What it does |
+| --- | --- | --- |
+| `ci.yml` | Push / PR to `main` | `moon ci` - runs tasks of affected projects and their dependents |
+| `deploy-dev.yml` | Merge to `main` | Deploys affected `deployable` apps to dev |
+| `deploy-staging.yml` | Push to `release/<app>/<version>` | Deploys that app to staging |
+| `release-please.yml` | Merge to `main` | Release PRs per app; deploys released apps to production |
+| `deploy-app.yml` | Called / manual | Tests, publishes and deploys one app |
 
-Choose one (or both) depending on your platform. See [Deployment Guide](docs/guides/deployment.md) for details.
+See the [Deployment Guide](docs/guides/deployment.md) for details.
 
 ## AI Assistants
 

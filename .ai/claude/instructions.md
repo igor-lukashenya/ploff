@@ -6,19 +6,22 @@ This file contains detailed instructions for Claude Code when working in this re
 
 ### Adding a New Application
 
-1. Create a new directory under `apps/<app-name>/`
-2. Add a `README.md` with setup and run instructions
-3. Add a `Dockerfile` in `infra/docker/Dockerfile.<app-name>`
-4. Add the service to `infra/docker/docker-compose.yml`
-5. Add build/test/lint targets to the root `Makefile`
-6. Add CI/CD pipeline configuration if needed
+1. Pick a stack: `make stacks`
+2. Generate it: `make new-app STACK=<stack> NAME=<app-name>` - this creates the app, its
+   Dockerfile and compose fragment, and registers it in Release Please, the root `.slnx`
+   and Dependabot
+3. Verify: `make run APP=<app-name> TASK=test`
+4. Fill in the app's `README.md` and `moon.yml` description
+5. Do NOT add per-app CI jobs or Makefile targets - the workflows and Makefile are generic
+
+If no generator exists for the stack, follow "Stacks without a generator" in `apps/README.md`.
 
 ### Adding a Shared Package
 
-1. Create a new directory under `packages/<package-name>/`
-2. Add a `README.md` explaining the package's purpose
-3. Configure it so apps can import from it (varies by language/ecosystem)
-4. Add tests
+1. Generate it: `make new-package STACK=<stack> NAME=<package-name>`
+2. Reference it from consuming apps (e.g. `ProjectReference`) AND add it to their
+   `moon.yml` `dependsOn` so CI and deploys track the dependency
+3. Add tests
 
 ### Making Infrastructure Changes
 

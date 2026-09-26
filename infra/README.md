@@ -8,7 +8,8 @@ configure, and deploy the project's infrastructure is defined here as code.
 ```
 infra/
 ├── docker/                    # Docker configurations
-│   ├── docker-compose.yml     # Local development compose
+│   ├── docker-compose.yml     # Shared local infrastructure (DBs, caches, ...)
+│   ├── compose.<app>.yml      # Per-app compose fragments (loaded automatically)
 │   └── Dockerfile.<app>       # Per-app Dockerfiles
 ├── kubernetes/                # Kubernetes manifests
 │   ├── base/                  # Base manifests (shared across environments)
@@ -30,6 +31,10 @@ Used for both local development and production deployments.
 
 All images are built with the repository root as the build context, so build-context
 exclusions live in the root `.dockerignore`.
+
+Each app has its own compose fragment, `compose.<app>.yml`. `make up` / `make build-docker`
+load `docker-compose.yml` plus every fragment, so adding an app never edits a shared file.
+Shared infrastructure (databases, caches, brokers) goes in `docker-compose.yml`.
 
 ```bash
 # Start local dev environment
@@ -71,11 +76,11 @@ make infra-apply TF_ENV=dev
 
 ## Adding Infrastructure for a New App
 
-1. Create `infra/docker/Dockerfile.<app-name>`
-2. Add the service to `infra/docker/docker-compose.yml`
-3. (If using K8s) Add base manifests to `infra/kubernetes/base/`
-4. (If using K8s) Add overlays for each environment
-5. (If using Terraform) Add or update modules as needed
+1. `make new-app` creates `infra/docker/Dockerfile.<app-name>` and
+   `infra/docker/compose.<app-name>.yml` for container-based stacks (or create them manually)
+2. (If using K8s) Add base manifests to `infra/kubernetes/base/`
+3. (If using K8s) Add overlays for each environment
+4. (If using Terraform) Add or update modules as needed
 
 ## Environments
 

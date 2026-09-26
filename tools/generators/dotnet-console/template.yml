@@ -1,0 +1,11 @@
+# moon template - https://moonrepo.dev/docs/guides/codegen
+# Use via: make new-app STACK=dotnet-console NAME=<name>
+title: '.NET console tool'
+description: 'Console application for CLI tools, jobs and utilities, with xUnit tests'
+destination: 'apps/[name]'
+
+variables:
+  name:
+    type: 'string'
+    required: true
+    prompt: 'Tool name (kebab-case)?'

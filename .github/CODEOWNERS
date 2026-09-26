@@ -19,11 +19,9 @@
 # ─── Infrastructure ─────────────────────────────────────────────────────────
 # infra/                     @your-org/devops-team
 # .github/workflows/         @your-org/devops-team
-# .azure/                    @your-org/devops-team
 
 # ─── Documentation ──────────────────────────────────────────────────────────
 # docs/                      @your-org/team-leads
 
 # ─── CI/CD ───────────────────────────────────────────────────────────────────
 # .github/workflows/         @your-org/devops-team
-# .azure/pipelines/          @your-org/devops-team

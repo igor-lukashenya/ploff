@@ -1,0 +1,9 @@
+namespace {{ name | pascal_case }};
+
+/// <summary>
+/// Placeholder public API - replace with the library's real types.
+/// </summary>
+public static class PackageInfo
+{
+    public const string Name = "{{ name }}";
+}

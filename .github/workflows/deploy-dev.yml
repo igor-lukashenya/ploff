@@ -1,7 +1,9 @@
 # GitHub Actions - Deploy to Dev
 #
-# Auto-deploys all affected apps to the dev environment on every merge to main.
-# Uses dorny/paths-filter to detect which apps changed.
+# Auto-deploys every affected deployable app to the dev environment on each merge
+# to main. moon computes the affected projects for the pushed commit range,
+# including apps that depend on a changed shared package. Apps opt in with the
+# `deployable` tag in their moon.yml - no changes to this file are needed.
 
 name: Deploy Dev
 
@@ -17,46 +19,43 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # ---- Detect which apps changed ----
-  changes:
-    name: Detect Changes
+  # ---- Detect which deployable apps are affected ----
+  affected:
+    name: Detect affected apps
     runs-on: ubuntu-latest
     outputs:
-      sample-api: ${{ steps.filter.outputs.sample-api }}
-      sample-web: ${{ steps.filter.outputs.sample-web }}
+      apps: ${{ steps.query.outputs.apps }}
     steps:
       - uses: actions/checkout@v4
-
-      - uses: dorny/paths-filter@v3
-        id: filter
         with:
-          filters: |
-            sample-api:
-              - 'apps/sample-api/**'
-              - 'packages/**'
-            sample-web:
-              - 'apps/sample-web/**'
-              - 'packages/**'
+          fetch-depth: 0
+          filter: 'blob:none'
 
-  # ---- Deploy affected apps to dev ----
-  deploy-sample-api:
-    name: Deploy sample-api to dev
-    needs: changes
-    if: needs.changes.outputs.sample-api == 'true'
+      - uses: moonrepo/setup-toolchain@v0
+
+      - name: Query affected deployable apps
+        id: query
+        env:
+          MOON_BASE: ${{ github.event.before }}
+          MOON_HEAD: ${{ github.sha }}
+        run: |
+          APPS=$(moon query projects --affected --downstream deep --tags deployable \
+            | jq -c '[.projects[].id]')
+          echo "Affected deployable apps: $APPS"
+          echo "apps=$APPS" >> "$GITHUB_OUTPUT"
+
+  # ---- Deploy each affected app to dev ----
+  deploy:
+    name: Deploy ${{ matrix.app }} to dev
+    needs: affected
+    if: needs.affected.outputs.apps != '[]'
+    strategy:
+      fail-fast: false
+      matrix:
+        app: ${{ fromJSON(needs.affected.outputs.apps) }}
     uses: ./.github/workflows/deploy-app.yml
     with:
-      app: sample-api
-      version: latest
-      environment: dev
-    secrets: inherit
-
-  deploy-sample-web:
-    name: Deploy sample-web to dev
-    needs: changes
-    if: needs.changes.outputs.sample-web == 'true'
-    uses: ./.github/workflows/deploy-app.yml
-    with:
-      app: sample-web
+      app: ${{ matrix.app }}
       version: latest
       environment: dev
     secrets: inherit

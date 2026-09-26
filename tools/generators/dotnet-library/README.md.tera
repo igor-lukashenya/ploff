@@ -1,0 +1,25 @@
+# {{ name }}
+
+> TODO: Describe what this library provides.
+
+Shared .NET library, generated from the `dotnet-library` template.
+
+## Using it from an app
+
+1. Reference the project from the consuming app's `.csproj`:
+   ```xml
+   <ProjectReference Include="..\..\..\..\packages\{{ name }}\src\{{ name | pascal_case }}\{{ name | pascal_case }}.csproj" />
+   ```
+2. Declare the dependency in the app's `moon.yml` so CI and deploys pick up changes:
+   ```yaml
+   dependsOn:
+     - '{{ name }}'
+   ```
+3. If the app has a Dockerfile, copy this package into the build stage as well.
+
+## Commands
+
+| Command | Description |
+| --- | --- |
+| `make run APP={{ name }} TASK=test` | Run tests |
+| `make run APP={{ name }} TASK=lint` | Verify formatting |

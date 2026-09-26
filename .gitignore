@@ -113,3 +113,7 @@ site/
 
 # ─── Local AI agent state ────────────────────
 .pi/
+
+# ─── moon ────────────────────────────────────
+.moon/cache/
+.moon/docker/

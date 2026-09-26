@@ -1,5 +1,8 @@
 # Monorepo Tooling Investigation - Independent Releases & Multi-App Management
 
+> **Outcome:** superseded by [ADR-003](../adr/003-monorepo-tooling.md) - moon was chosen for
+> orchestration (instead of an enhanced Makefile), Release Please was kept for releases.
+
 ## Problem Statement
 
 Ploff is a monorepo boilerplate that will host multiple independently deployable apps (APIs, UIs, workers). We need:

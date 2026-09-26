@@ -1,0 +1,13 @@
+# moon toolchains - https://moonrepo.dev/docs/config/toolchain
+# Node.js is installed by moon (version from .prototools) and npm dependencies are
+# installed automatically per project before tasks run.
+# .NET has no moon toolchain plugin: tasks call the system `dotnet` (pinned by global.json).
+$schema: 'https://moonrepo.dev/schemas/toolchains.json'
+
+javascript:
+  packageManager: 'npm'
+
+node:
+  versionFromPrototools: true
+
+npm: {}

@@ -8,6 +8,8 @@ Welcome to the project! This guide will help you set up your development environ
 - Bash — all scripts in `tools/scripts/` are Bash (on Windows use WSL or the devcontainer)
 - [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/)
 - [Make](https://www.gnu.org/software/make/) (usually pre-installed on macOS/Linux; on Windows use WSL)
+- [proto](https://moonrepo.dev/proto) — installs the pinned versions of moon and Node.js from `.prototools`
+- [.NET SDK](https://dotnet.microsoft.com/download) — version from `global.json` (for .NET projects)
 - [Python](https://www.python.org/) (3.9+) — for MkDocs documentation (`pip install -r docs/requirements.txt`)
 - Language-specific tools as needed by individual apps (see each app's README)
 
@@ -33,33 +35,46 @@ See the root [README.md](../index.md) for the full structure.
 ## Setup
 
 ```bash
-# Install dependencies for all apps
+# One-time: install proto (toolchain manager), then restart your shell
+curl -fsSL https://moonrepo.dev/install/proto.sh | bash
+
+# Install moon + Node.js (pinned in .prototools) and sync the workspace
 make setup
+
+# Lint, type-check and test every project
+make check
 
 # Start the local development environment (Docker Compose)
 make up
-
-# Verify everything is running
 make ps
 ```
+
+Tasks are orchestrated by [moon](https://moonrepo.dev) — see
+[ADR-003](../adr/003-monorepo-tooling.md). The Makefile wraps the common commands.
 
 ## Common Commands
 
 ```bash
-make help              # Show all available commands
-make up                # Start local Docker environment
-make down              # Stop local Docker environment
-make test              # Run all tests
-make lint              # Run all linters
-make build             # Build all applications
-make logs              # Tail logs from all services
-make docs-serve         # Serve docs locally (http://localhost:8000)
-make docs-build         # Build static docs site
+make help                          # Show all available commands
+make projects                      # List all projects (apps and packages)
+make check                         # Lint + type-check + test everything
+make ci                            # Run only tasks affected by your changes (like CI)
+make run APP=sample-api TASK=test  # Run one task of one project
+make dev APP=sample-web            # Start one project's dev server
+make build                         # Build all projects
+make up / make down / make logs    # Local Docker Compose environment
+make docs-serve                    # Serve docs locally (http://localhost:8000)
 ```
 
 ## Adding Your First App
 
-See `apps/README.md` for step-by-step instructions on adding a new application.
+```bash
+make stacks                                  # List available generators
+make new-app STACK=dotnet-service NAME=orders
+make run APP=orders TASK=test
+```
+
+See `apps/README.md` for details.
 
 ## Next Steps
 

@@ -1,0 +1,24 @@
+# moon workspace configuration - https://moonrepo.dev/docs/config/workspace
+# See docs/adr/003-monorepo-tooling.md for why moon is used.
+$schema: 'https://moonrepo.dev/schemas/workspace.json'
+
+# Every folder in apps/ and packages/ with a moon.yml is a project.
+# The folder name is the project ID (e.g. apps/sample-api -> sample-api).
+projects:
+  globs:
+    - 'apps/*/moon.yml'
+    - 'packages/*/moon.yml'
+
+vcs:
+  client: 'git'
+  provider: 'github'
+  defaultBranch: 'main'
+
+# Apps may depend on libraries, never on other apps (see apps/README.md).
+constraints:
+  enforceLayerRelationships: true
+
+# Scaffolding templates used by `make new-app` / `make new-package`.
+generator:
+  templates:
+    - './tools/generators'

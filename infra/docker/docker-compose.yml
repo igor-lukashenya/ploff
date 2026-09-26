@@ -1,39 +1,16 @@
 # Docker Compose - Local Development
 #
-# Start:  make up   (or: docker compose -f infra/docker/docker-compose.yml up -d)
-# Stop:   make down (or: docker compose -f infra/docker/docker-compose.yml down)
-# Logs:   make logs
+# Start:  make up    Stop: make down    Logs: make logs
+#
+# This base file holds shared infrastructure (databases, caches, brokers).
+# Each app has its own fragment, compose.<app>.yml, created by `make new-app`.
+# The Makefile loads this file plus every compose.*.yml fragment, so adding an
+# app never requires editing this file. Equivalent manual command:
+#
+#   docker compose -f infra/docker/docker-compose.yml \
+#     $(for f in infra/docker/compose.*.yml; do printf -- '-f %s ' "$f"; done) up -d
 
-services:
-  # ---- Sample API (.NET) ----
-  sample-api:
-    build:
-      context: ../../
-      dockerfile: infra/docker/Dockerfile.sample-api
-    ports:
-      - "8080:8080"
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-      start_period: 10s
-
-  # ---- Sample Web (React/Vite) ----
-  sample-web:
-    build:
-      context: ../../
-      dockerfile: infra/docker/Dockerfile.sample-web
-    ports:
-      - "3000:80"
-    environment:
-      - API_UPSTREAM=http://sample-api:8080
-    depends_on:
-      sample-api:
-        condition: service_healthy
-
+services: {}
   # ---- Example: Database ----
   # db:
   #   image: postgres:16-alpine

@@ -1,0 +1,47 @@
+# {{ name }}
+
+> TODO: Describe what this service does.
+
+.NET 10 Minimal API service, generated from the `dotnet-service` template.
+
+## Structure
+
+```
+apps/{{ name }}/
+├── {{ name | pascal_case }}.slnx          # Solution (src + tests)
+├── moon.yml                  # moon project config (tasks, tags, dependencies)
+├── src/{{ name | pascal_case }}/          # Service source
+└── tests/{{ name | pascal_case }}.Tests/  # xUnit integration tests (WebApplicationFactory)
+```
+
+## Commands
+
+Run from the repository root:
+
+| Command | Description |
+| --- | --- |
+| `make dev APP={{ name }}` | Run locally on http://localhost:{{ port }} |
+| `make run APP={{ name }} TASK=test` | Run tests |
+| `make run APP={{ name }} TASK=lint` | Verify formatting |
+| `make run APP={{ name }} TASK=publish` | Publish the deployable artifact to `dist/` |
+| `make up` | Run in Docker Compose (with all other services) |
+
+## Endpoints
+
+| Endpoint | Description |
+| --- | --- |
+| `GET /` | Service info (name, version) |
+| `GET /health` | Liveness check |
+| `GET /health/ready` | Readiness check |
+
+## Configuration
+
+| Variable | Description | Default |
+| --- | --- | --- |
+| `ASPNETCORE_ENVIRONMENT` | Environment name | `Production` |
+| `ASPNETCORE_URLS` | Listen URLs (Docker image sets `http://+:8080`) | - |
+
+## Releases
+
+Versioned independently by Release Please. Use the `{{ name }}` scope in commits,
+e.g. `feat({{ name }}): add orders endpoint`.

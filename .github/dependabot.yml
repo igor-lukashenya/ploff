@@ -82,6 +82,8 @@ updates:
       npm-minor-patch:
         update-types: ["minor", "patch"]
 
+  # new-project.sh inserts entries for new apps/packages above this line
+
   # Templates for other ecosystems:
   #
   # Node.js (npm/yarn/pnpm):

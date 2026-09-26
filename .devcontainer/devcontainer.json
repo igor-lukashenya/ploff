@@ -5,17 +5,27 @@
   "features": {
     "ghcr.io/devcontainers/features/docker-in-docker:2": {},
     "ghcr.io/devcontainers/features/git:1": {},
-    "ghcr.io/devcontainers/features/github-cli:1": {}
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    // .NET SDK (exact version is resolved from global.json)
+    "ghcr.io/devcontainers/features/dotnet:2": { "version": "10.0" }
 
-    // TODO: Add features for your tech stack. Examples:
-    // "ghcr.io/devcontainers/features/node:1": { "version": "20" },
+    // Node.js and moon are installed by proto from .prototools (see postCreateCommand).
+    // Add features for other stacks as needed, e.g.:
     // "ghcr.io/devcontainers/features/python:1": { "version": "3.12" },
-    // "ghcr.io/devcontainers/features/dotnet:2": { "version": "8.0" },
     // "ghcr.io/devcontainers/features/go:1": { "version": "1.22" },
-    // "ghcr.io/devcontainers/features/rust:1": {},
     // "ghcr.io/devcontainers/features/terraform:1": {},
     // "ghcr.io/devcontainers/features/kubectl-helm-minikube:1": {}
   },
+
+  // proto-managed tools (moon, node, npm)
+  "remoteEnv": {
+    "PATH": "/home/vscode/.proto/shims:/home/vscode/.proto/bin:${containerEnv:PATH}"
+  },
+
+  // Install proto, then the pinned toolchains and project dependencies
+  "postCreateCommand": "curl -fsSL https://moonrepo.dev/install/proto.sh | bash -s -- --no-modify-profile && export PATH=\"$HOME/.proto/shims:$HOME/.proto/bin:$PATH\" && make setup",
+  // Uncomment to start the Docker Compose environment on every start:
+  // "postStartCommand": "make up",
 
   "customizations": {
     "vscode": {
@@ -30,31 +40,23 @@
         "GitHub.copilot",
         "GitHub.copilot-chat",
         "eamodio.gitlens",
-        "ms-azuretools.vscode-docker"
+        "ms-azuretools.vscode-docker",
+        "moonrepo.moon-console",
+        "ms-dotnettools.csdevkit",
+        "dbaeumer.vscode-eslint"
 
-        // TODO: Add extensions for your tech stack. Examples:
-        // "dbaeumer.vscode-eslint",
-        // "esbenp.prettier-vscode",
+        // Add extensions for other stacks as needed, e.g.:
         // "ms-python.python",
-        // "ms-dotnettools.csdevkit",
         // "golang.Go",
-        // "rust-lang.rust-analyzer",
         // "hashicorp.terraform",
         // "ms-kubernetes-tools.vscode-kubernetes-tools"
       ]
     }
   },
 
-  // Start Docker Compose services when the container starts
-  // "postCreateCommand": "make setup",
-  // "postStartCommand": "make up",
-
   "forwardPorts": [
-    // TODO: Add ports your apps expose. Examples:
-    // 3000,   // API
-    // 8080,   // Web frontend
-    // 5432,   // PostgreSQL
-    // 6379    // Redis
+    8080, // sample-api
+    3000  // sample-web
   ],
 
   "remoteUser": "vscode"

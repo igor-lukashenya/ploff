@@ -1,0 +1,20 @@
+namespace {{ name | pascal_case }};
+
+/// <summary>
+/// Entry point logic, kept separate from Program.cs so it can be unit tested.
+/// </summary>
+public static class App
+{
+    public static int Run(string[] args, TextWriter output)
+    {
+        if (args.Contains("--version"))
+        {
+            var version = typeof(App).Assembly.GetName().Version?.ToString(3) ?? "unknown";
+            output.WriteLine($"{{ name }} {version}");
+            return 0;
+        }
+
+        output.WriteLine("{{ name }}: TODO - implement the tool");
+        return 0;
+    }
+}

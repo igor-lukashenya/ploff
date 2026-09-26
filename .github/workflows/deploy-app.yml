@@ -7,7 +7,8 @@
 #   - deploy-staging.yml (release branch -> staging)
 #   - Manual dispatch (for ad-hoc deployments)
 #
-# Supports both .NET (sample-api) and Node.js (sample-web) apps.
+# Stack-agnostic: every deployable app exposes a moon `publish` task that writes
+# its artifact to apps/<app>/dist (see .moon/tasks/ and each app's moon.yml).
 
 name: Deploy App
 
@@ -15,7 +16,7 @@ on:
   workflow_call:
     inputs:
       app:
-        description: 'Application to deploy'
+        description: 'Application to deploy (moon project ID)'
         required: true
         type: string
       version:
@@ -30,12 +31,9 @@ on:
   workflow_dispatch:
     inputs:
       app:
-        description: 'Application to deploy'
+        description: 'Application to deploy (moon project ID, e.g. sample-api)'
         required: true
-        type: choice
-        options:
-          - sample-api
-          - sample-web
+        type: string
       version:
         description: 'Version to deploy (e.g., 1.2.0 or "latest")'
         required: true
@@ -50,12 +48,17 @@ on:
           - staging
           - production
 
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
 jobs:
-  # ---- Build .NET app ----
-  build-dotnet:
+  # ---- Test + build the deployable artifact ----
+  build:
     name: Build ${{ inputs.app }} v${{ inputs.version }}
-    if: inputs.app == 'sample-api'
     runs-on: ubuntu-latest
+    env:
+      APP: ${{ inputs.app }}
     steps:
       - uses: actions/checkout@v4
 
@@ -63,55 +66,19 @@ jobs:
         with:
           global-json-file: global.json
 
-      - name: Restore
-        run: dotnet restore apps/${{ inputs.app }}
+      - uses: moonrepo/setup-toolchain@v0
+        with:
+          auto-install: true
 
-      - name: Build
-        run: dotnet build apps/${{ inputs.app }} -c Release --no-restore
-
-      - name: Test
-        run: dotnet test apps/${{ inputs.app }} -c Release --no-build --verbosity normal
-
-      - name: Publish
-        # Publish the app project only - the app folder's .slnx also contains test projects
-        env:
-          APP: ${{ inputs.app }}
+      - name: Verify app is deployable
         run: |
-          PROJECT=$(ls "apps/$APP"/*.csproj)
-          dotnet publish "$PROJECT" -c Release -o "publish/$APP" --no-build
+          if ! moon query projects --tags deployable | jq -e --arg app "$APP" '.projects[] | select(.id == $app)' > /dev/null; then
+            echo "::error::'$APP' is not a moon project tagged 'deployable'"
+            exit 1
+          fi
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ inputs.app }}-${{ inputs.version }}
-          path: publish/${{ inputs.app }}
-          retention-days: 30
-
-  # ---- Build Node.js app ----
-  build-node:
-    name: Build ${{ inputs.app }} v${{ inputs.version }}
-    if: inputs.app == 'sample-web'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: 'npm'
-          cache-dependency-path: apps/${{ inputs.app }}/package-lock.json
-
-      - name: Install dependencies
-        run: cd apps/${{ inputs.app }} && npm ci
-
-      - name: Lint
-        run: cd apps/${{ inputs.app }} && npm run lint
-
-      - name: Test
-        run: cd apps/${{ inputs.app }} && npm test
-
-      - name: Build
-        run: cd apps/${{ inputs.app }} && npm run build
+      - name: Test and publish
+        run: moon run "$APP:test" "$APP:publish"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -123,8 +90,7 @@ jobs:
   # ---- Deploy to Target Environment ----
   deploy:
     name: Deploy ${{ inputs.app }} to ${{ inputs.environment }}
-    needs: [build-dotnet, build-node]
-    if: always() && (needs.build-dotnet.result == 'success' || needs.build-node.result == 'success')
+    needs: build
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
     steps:
@@ -137,15 +103,19 @@ jobs:
           path: publish/${{ inputs.app }}
 
       - name: Deploy
+        env:
+          APP: ${{ inputs.app }}
+          VERSION: ${{ inputs.version }}
+          ENVIRONMENT: ${{ inputs.environment }}
         run: |
           echo "============================================"
-          echo "Deploying ${{ inputs.app }} v${{ inputs.version }}"
-          echo "Environment: ${{ inputs.environment }}"
+          echo "Deploying $APP v$VERSION"
+          echo "Environment: $ENVIRONMENT"
           echo "============================================"
           echo ""
           echo "TODO: Add your deployment commands here."
           echo ""
-          echo "For .NET apps:"
+          echo "For services:"
           echo "  - Docker build + push to registry"
           echo "  - Azure Container Apps / App Service"
           echo "  - Kubernetes apply"
@@ -156,4 +126,4 @@ jobs:
           echo "  - Vercel / Netlify / Cloudflare Pages"
           echo ""
           echo "Artifact contents:"
-          ls -la publish/${{ inputs.app }}/
+          ls -la "publish/$APP/"

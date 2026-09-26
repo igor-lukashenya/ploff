@@ -1,0 +1,5 @@
+# Tool versions for this repository, managed by proto (https://moonrepo.dev/proto).
+# Installed locally by `make setup` and in CI by moonrepo/setup-toolchain.
+# The .NET SDK is pinned separately in global.json.
+moon = "2.5.5"
+node = "22"

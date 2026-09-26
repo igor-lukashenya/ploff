@@ -1,0 +1,43 @@
+# {{ name }}
+
+> TODO: Describe what this web app does.
+
+React 19 + Vite + TypeScript SPA, generated from the `react-web` template.
+
+## Tech Stack
+
+- **React 19** + **TypeScript**, built with **Vite**
+- **TanStack Query** for server state, **React Router** for routing
+- **Vitest** + **Testing Library** for tests, **ESLint** for linting
+
+## Commands
+
+Run from the repository root:
+
+| Command | Description |
+| --- | --- |
+| `make dev APP={{ name }}` | Vite dev server on http://localhost:3000 |
+| `make run APP={{ name }} TASK=test` | Run tests |
+| `make run APP={{ name }} TASK=lint` | Lint |
+| `make run APP={{ name }} TASK=typecheck` | Type-check |
+| `make run APP={{ name }} TASK=build` | Production build to `dist/` |
+| `make up` | Run in Docker Compose (nginx, port {{ port }}) |
+
+## Calling the API
+
+The app calls the backend at `/api` on its own origin:
+
+- **Dev**: Vite proxies `/api/*` to `http://localhost:8080` (see `vite.config.ts`)
+- **Docker**: nginx proxies `/api/*` to `API_UPSTREAM` (default `{{ api_upstream }}`)
+
+Set `VITE_API_URL` at build time only if the API is on a different origin.
+
+## Structure
+
+Features are collocated under `src/features/<feature>/` with `components/`, `hooks/`,
+`services/` and `types/`. Shared UI lives in `src/shared/`.
+
+## Releases
+
+Versioned independently by Release Please. Use the `{{ name }}` scope in commits,
+e.g. `feat({{ name }}): add orders page`.

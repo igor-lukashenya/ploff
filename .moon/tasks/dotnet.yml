@@ -1,0 +1,58 @@
+# Standard tasks for .NET projects (moon.yml with `language: 'csharp'`).
+#
+# Convention: the project root contains exactly one .slnx plus src/ and tests/,
+# so every dotnet command resolves the solution without extra arguments.
+# Projects add their own `dev` and `publish` tasks (they need the entry project path).
+$schema: 'https://moonrepo.dev/schemas/tasks.json'
+
+inheritedBy:
+  languages: ['csharp']
+
+fileGroups:
+  sources:
+    - '*.slnx'
+    - 'src/**/*'
+    - 'tests/**/*'
+    - '!**/bin/**'
+    - '!**/obj/**'
+    - '/global.json'
+    - '/.editorconfig'
+    - '/Directory.*.props'
+
+tasks:
+  build:
+    description: 'Compile the solution (Release)'
+    command: 'dotnet build -c Release'
+    deps:
+      # Build dependencies (shared packages in dependsOn) first; also makes CI
+      # re-run this project's tasks when a dependency changes
+      - '^:build'
+    inputs:
+      - '@group(sources)'
+    options:
+      # dotnet builds are incremental; bin/obj are not tracked as moon outputs
+      cache: false
+
+  test:
+    description: 'Run unit and integration tests'
+    command: 'dotnet test -c Release --no-build'
+    deps:
+      - '~:build'
+    inputs:
+      - '@group(sources)'
+
+  lint:
+    description: 'Verify formatting and analyzers against .editorconfig'
+    command: 'dotnet format --verify-no-changes'
+    deps:
+      # dotnet format restores/loads the solution; avoid racing the build on obj/
+      - '~:build'
+    inputs:
+      - '@group(sources)'
+
+  format:
+    description: 'Apply formatting fixes'
+    command: 'dotnet format'
+    options:
+      cache: false
+      runInCI: false

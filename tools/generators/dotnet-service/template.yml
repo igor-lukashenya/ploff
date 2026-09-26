@@ -1,0 +1,15 @@
+# moon template - https://moonrepo.dev/docs/guides/codegen
+# Use via: make new-app STACK=dotnet-service NAME=<name>
+title: '.NET service'
+description: 'ASP.NET Core Minimal API service with health checks, xUnit tests, Dockerfile and compose fragment'
+destination: 'apps/[name]'
+
+variables:
+  name:
+    type: 'string'
+    required: true
+    prompt: 'Service name (kebab-case)?'
+  port:
+    type: 'number'
+    default: 8080
+    prompt: 'Host port for local Docker Compose?'

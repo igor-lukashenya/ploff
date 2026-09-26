@@ -1,0 +1,100 @@
+.health-page {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.health-subtitle {
+  color: var(--color-text-secondary);
+  margin-bottom: 2rem;
+}
+
+.health-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.health-card {
+  padding: 1.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-bg);
+  box-shadow: var(--shadow);
+}
+
+.health-card h3 {
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  color: var(--color-text);
+}
+
+.health-info {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.5rem 1rem;
+  margin: 0;
+}
+
+.health-info dt {
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+.health-info dd {
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+.health-status-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.health-status-row:last-of-type {
+  border-bottom: none;
+}
+
+.health-status-row span {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.health-error {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.health-error p {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+}
+
+.health-note {
+  margin: 0.75rem 0 0;
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+}
+
+.health-refresh-btn {
+  margin-top: 1rem;
+  width: 100%;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-bg-secondary);
+  cursor: pointer;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  transition: background 0.15s;
+}
+
+.health-refresh-btn:hover {
+  background: var(--color-border);
+}

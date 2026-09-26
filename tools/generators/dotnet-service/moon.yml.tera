@@ -1,0 +1,29 @@
+$schema: 'https://moonrepo.dev/schemas/moon.json'
+
+language: 'csharp'
+layer: 'application'
+stack: 'backend'
+tags: ['deployable', 'dotnet']
+
+project:
+  title: '{{ name }}'
+  description: 'TODO: Describe what this service does'
+
+# Uncomment to depend on shared packages (affects CI and deploys):
+# dependsOn:
+#   - 'shared-kernel'
+
+# Standard build/test/lint/format tasks are inherited from .moon/tasks/dotnet.yml
+tasks:
+  dev:
+    description: 'Run the service locally'
+    command: 'dotnet run --project src/{{ name | pascal_case }}'
+    preset: 'server'
+
+  publish:
+    description: 'Produce the deployable artifact in dist/'
+    command: 'dotnet publish src/{{ name | pascal_case }}/{{ name | pascal_case }}.csproj -c Release --no-build -o dist'
+    deps:
+      - '~:build'
+    outputs:
+      - 'dist'

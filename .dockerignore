@@ -19,7 +19,6 @@ docs/
 
 # CI/CD
 .github/
-.azure/
 
 # AI instructions
 .ai/

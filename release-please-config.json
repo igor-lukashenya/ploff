@@ -15,7 +15,7 @@
       "extra-files": [
         {
           "type": "xml",
-          "path": "SampleApi.csproj",
+          "path": "src/SampleApi/SampleApi.csproj",
           "xpath": "//Project/PropertyGroup/Version"
         }
       ]
