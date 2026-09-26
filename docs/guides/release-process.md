@@ -69,12 +69,19 @@ These are one-time settings for each repository created from the template:
 2. **`RELEASE_PLEASE_TOKEN` secret** (recommended): Release PRs and their updates are pushed
    by the workflow. Pushes made with the default `GITHUB_TOKEN` don't trigger other workflows,
    so without this secret release PRs get **no CI run** until you trigger one (close and
-   reopen the PR). Create either:
-   - a **GitHub App** installed on the repository, with *Contents* and *Pull requests*
-     read/write, and store an installation token as `RELEASE_PLEASE_TOKEN`; or
-   - a **fine-grained personal access token** limited to this repository, with *Contents* and
-     *Pull requests* read/write, stored as `RELEASE_PLEASE_TOKEN` (Settings → Secrets and
-     variables → Actions).
+   reopen the PR).
+   1. Create a **fine-grained personal access token**
+      (Settings → Developer settings → Personal access tokens → Fine-grained tokens):
+      - Repository access: *Only select repositories* → this repository
+      - Repository permissions: **Contents**, **Pull requests** and **Issues** (labels on
+        release PRs) set to *Read and write*
+      - Expiration: up to 1 year - renew it before it expires, or release PRs lose CI again
+   2. Store it in the repository: Settings → Secrets and variables → Actions →
+      **New repository secret** → name `RELEASE_PLEASE_TOKEN`.
+
+   Release PRs are then authored by the token's owner instead of `github-actions[bot]`. For
+   organizations, a GitHub App is the better long-term option; it needs a workflow step
+   that creates a short-lived token on each run (`actions/create-github-app-token`).
 
 ## Shared Packages
 
