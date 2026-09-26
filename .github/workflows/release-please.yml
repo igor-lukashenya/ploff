@@ -14,8 +14,8 @@
 # Apps are registered in release-please-config.json (done by `make new-app`);
 # no changes to this file are needed when adding apps.
 #
-# Token: set the optional RELEASE_PLEASE_TOKEN secret (GitHub App token or
-# fine-grained PAT with contents + pull-requests write). Pushes made with the
+# Token: set the optional RELEASE_PLEASE_TOKEN secret (fine-grained PAT with
+# contents, pull-requests and issues write). Pushes made with the
 # default GITHUB_TOKEN don't trigger other workflows, so without it release PRs
 # get no CI run until you trigger one (e.g. close and reopen the PR).
 # See docs/guides/release-process.md.
