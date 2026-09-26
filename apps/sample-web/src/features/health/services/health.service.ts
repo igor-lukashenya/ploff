@@ -1,7 +1,5 @@
-import { apiClient } from '@/services/api';
+import { API_BASE_URL, apiClient } from '@/services/api';
 import type { ApiInfo, HealthStatus } from '../types/health.types';
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 
 export const healthService = {
   getApiInfo: async (): Promise<ApiInfo> => {
@@ -11,7 +9,7 @@ export const healthService = {
 
   getHealth: async (): Promise<HealthStatus> => {
     try {
-      const response = await fetch(`${API_URL}/health`);
+      const response = await fetch(`${API_BASE_URL}/health`);
       if (response.ok) {
         return { status: 'healthy' };
       }
@@ -23,7 +21,7 @@ export const healthService = {
 
   getReadiness: async (): Promise<HealthStatus> => {
     try {
-      const response = await fetch(`${API_URL}/health/ready`);
+      const response = await fetch(`${API_BASE_URL}/health/ready`);
       if (response.ok) {
         return { status: 'healthy' };
       }

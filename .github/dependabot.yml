@@ -31,9 +31,21 @@ updates:
       - "dependencies"
       - "docker"
 
+  # ─── Documentation (MkDocs) ────────────────────────────────────────────────
+  - package-ecosystem: "pip"
+    directory: "/docs"
+    schedule:
+      interval: "monthly"
+    commit-message:
+      prefix: "docs"
+    labels:
+      - "dependencies"
+      - "documentation"
+
   # ─── Terraform ─────────────────────────────────────────────────────────────
   - package-ecosystem: "terraform"
-    directory: "/infra/terraform/environments/dev"
+    directories:
+      - "/infra/terraform/environments/*"
     schedule:
       interval: "weekly"
     commit-message:
@@ -43,7 +55,34 @@ updates:
       - "infrastructure"
 
   # ─── Application Dependencies ──────────────────────────────────────────────
-  # TODO: Add entries for each app's package ecosystem.
+  # One entry per app. Commit prefix uses the app scope so Release Please
+  # attributes dependency bumps to the right app.
+
+  - package-ecosystem: "nuget"
+    directory: "/apps/sample-api"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "deps(sample-api)"
+    labels:
+      - "dependencies"
+    groups:
+      nuget-minor-patch:
+        update-types: ["minor", "patch"]
+
+  - package-ecosystem: "npm"
+    directory: "/apps/sample-web"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "deps(sample-web)"
+    labels:
+      - "dependencies"
+    groups:
+      npm-minor-patch:
+        update-types: ["minor", "patch"]
+
+  # Templates for other ecosystems:
   #
   # Node.js (npm/yarn/pnpm):
   # - package-ecosystem: "npm"

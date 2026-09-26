@@ -5,7 +5,7 @@
 # Usage:
 #   bash tools/scripts/init-project.sh
 #
-# This script replaces template tokens with your project's actual values.
+# This script replaces the template name (Ploff/ploff) with your project's values.
 # Run it once after cloning/creating from the template.
 
 set -euo pipefail
@@ -39,6 +39,11 @@ DEFAULT_SLUG=$(echo "$DISPLAY_NAME" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0
 read -rp "Project slug for repo/URLs/code [${DEFAULT_SLUG}]: " SLUG
 SLUG="${SLUG:-$DEFAULT_SLUG}"
 
+if ! echo "$SLUG" | grep -qE '^[a-z][a-z0-9-]*$'; then
+  echo -e "${RED}Error: Slug must be kebab-case (lowercase letters, numbers, hyphens).${NC}"
+  exit 1
+fi
+
 CURRENT_YEAR=$(date +%Y)
 read -rp "Copyright holder (e.g., Your Name or Company) []: " COPYRIGHT_HOLDER
 COPYRIGHT_HOLDER="${COPYRIGHT_HOLDER:-$DISPLAY_NAME}"
@@ -56,28 +61,49 @@ if [[ ! "$CONFIRM" =~ ^[yY]$ ]]; then
   exit 0
 fi
 
-# ─── Replace tokens in git-tracked files ─────────────────────────────────────
+# ─── Replace template name in git-tracked files ──────────────────────────────
+#
+# The template uses its own name as the placeholder so it stays runnable before
+# initialization:  "Ploff" -> display name,  "ploff" -> slug.
+# perl is used instead of `sed -i` for macOS/Linux/Git Bash portability; values are
+# passed via the environment so special characters are never interpreted.
 
 echo ""
-echo -e "${BLUE}Replacing template tokens...${NC}"
+echo -e "${BLUE}Replacing template name...${NC}"
 
 cd "$REPO_ROOT"
 
-# Get list of git-tracked text files (excludes .git/, binaries, etc.)
-FILES=$(git ls-files)
+if ! git grep -qI 'Ploff\|ploff' -- ':!tools/scripts/init-project.sh'; then
+  echo -e "${YELLOW}No template references found - project already initialized?${NC}"
+fi
+
+# PascalCase name for the root .NET solution file (Ploff.slnx -> <Name>.slnx)
+SOLUTION_NAME=$(echo "$DISPLAY_NAME" | perl -pe 's/[^A-Za-z0-9]+/ /g; s/(\w+)/\u$1/g; s/\s+//g')
+SOLUTION_NAME="${SOLUTION_NAME:-Ploff}"
+
+export PLOFF_DISPLAY_NAME="$DISPLAY_NAME" PLOFF_SLUG="$SLUG" PLOFF_SOLUTION="$SOLUTION_NAME"
 
 while IFS= read -r file; do
-  # Skip binary files and this script itself
-  if file --mime-type "$file" 2>/dev/null | grep -q "text/"; then
-    if grep -q '__PLOFF_' "$file" 2>/dev/null; then
-      sed -i "s|__PLOFF_DISPLAY_NAME__|${DISPLAY_NAME}|g" "$file"
-      sed -i "s|__PLOFF_SLUG__|${SLUG}|g" "$file"
-      sed -i "s|__PLOFF_YEAR__|${CURRENT_YEAR}|g" "$file"
-      sed -i "s|__PLOFF_COPYRIGHT_HOLDER__|${COPYRIGHT_HOLDER}|g" "$file"
-      echo -e "  ✅ ${file}"
-    fi
+  [ -f "$file" ] || continue
+  # -I skips binary files
+  if grep -qI 'Ploff\|ploff' "$file"; then
+    perl -pi -e 's/Ploff\.slnx/$ENV{PLOFF_SOLUTION}.slnx/g; s/Ploff/$ENV{PLOFF_DISPLAY_NAME}/g; s/ploff/$ENV{PLOFF_SLUG}/g' "$file"
+    echo -e "  ✅ ${file}"
   fi
-done <<< "$FILES"
+done < <(git ls-files -- ':!tools/scripts/init-project.sh')
+
+# LICENSE copyright line
+if [ -f LICENSE ]; then
+  export PLOFF_COPYRIGHT="Copyright (c) ${CURRENT_YEAR} ${COPYRIGHT_HOLDER}"
+  perl -pi -e 's/^Copyright \(c\) [^\r\n]*/$ENV{PLOFF_COPYRIGHT}/' LICENSE
+  echo -e "  ✅ LICENSE"
+fi
+
+# Root .NET solution file: Ploff.slnx -> <PascalCaseName>.slnx
+if [ -f Ploff.slnx ] && [ "$SOLUTION_NAME" != "Ploff" ]; then
+  git mv Ploff.slnx "${SOLUTION_NAME}.slnx"
+  echo -e "  ✅ Ploff.slnx -> ${SOLUTION_NAME}.slnx"
+fi
 
 # ─── Optional: Reset git history ─────────────────────────────────────────────
 

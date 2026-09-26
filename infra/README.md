@@ -8,7 +8,6 @@ configure, and deploy the project's infrastructure is defined here as code.
 ```
 infra/
 ├── docker/                    # Docker configurations
-│   ├── .dockerignore          # Files to exclude from Docker builds
 │   ├── docker-compose.yml     # Local development compose
 │   └── Dockerfile.<app>       # Per-app Dockerfiles
 ├── kubernetes/                # Kubernetes manifests
@@ -28,6 +27,9 @@ infra/
 ## Docker
 
 Used for both local development and production deployments.
+
+All images are built with the repository root as the build context, so build-context
+exclusions live in the root `.dockerignore`.
 
 ```bash
 # Start local dev environment

@@ -5,9 +5,10 @@ Welcome to the project! This guide will help you set up your development environ
 ## Prerequisites
 
 - [Git](https://git-scm.com/) (2.x+)
+- Bash — all scripts in `tools/scripts/` are Bash (on Windows use WSL or the devcontainer)
 - [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/)
-- [Make](https://www.gnu.org/software/make/) (usually pre-installed on macOS/Linux; on Windows use WSL or install via `choco install make`)
-- [Python](https://www.python.org/) (3.9+) — for MkDocs documentation (`pip install mkdocs-material`)
+- [Make](https://www.gnu.org/software/make/) (usually pre-installed on macOS/Linux; on Windows use WSL)
+- [Python](https://www.python.org/) (3.9+) — for MkDocs documentation (`pip install -r docs/requirements.txt`)
 - Language-specific tools as needed by individual apps (see each app's README)
 
 ## Clone the Repository

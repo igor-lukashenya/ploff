@@ -107,7 +107,7 @@ lint: lint-api lint-web ## Run all linters
 .PHONY: lint-api
 lint-api: ## Lint sample-api
 	@echo "$(BLUE)Linting sample-api...$(RESET)"
-	cd apps/sample-api && dotnet format --verify-no-changes --verbosity normal
+	cd apps/sample-api && dotnet format SampleApi.slnx --verify-no-changes --verbosity normal
 	@echo "$(GREEN)sample-api lint passed.$(RESET)"
 
 .PHONY: lint-web
@@ -119,7 +119,7 @@ lint-web: ## Lint sample-web
 .PHONY: format
 format: ## Format all code
 	@echo "$(BLUE)Formatting code...$(RESET)"
-	cd apps/sample-api && dotnet format
+	cd apps/sample-api && dotnet format SampleApi.slnx
 	cd apps/sample-web && npm run lint:fix
 	@echo "$(GREEN)Formatting complete.$(RESET)"
 

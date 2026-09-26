@@ -17,7 +17,8 @@ code, and documentation. The repository is language-agnostic and infrastructure-
 - `docs/` — Documentation (ADRs, guides, release notes)
 - `.github/` — GitHub Actions workflows, Copilot config, issue/PR templates
 - `.azure/` — Azure DevOps pipeline definitions
-- `.ai/` — AI assistant configuration (tasks, skills, instructions)
+- `.ai/` — Shared AI assistant instructions and coding standards
+- `.claude/` — Claude Code project skills and settings
 
 ## Conventions
 
@@ -50,11 +51,13 @@ code, and documentation. The repository is language-agnostic and infrastructure-
 
 ## AI Task Instructions
 
-For more specific task instructions and skills, see:
-- `.ai/claude/instructions.md` — Detailed Claude-specific instructions
-- `.ai/claude/tasks/` — Reusable task definitions
-- `.ai/claude/skills/` — Skill configurations
-- `.ai/shared/coding-standards.md` — Coding standards for all AI assistants
+The following files are imported into this context automatically:
+
+- Project structure and conventions: @AGENTS.md
+- Detailed Claude-specific instructions: @.ai/claude/instructions.md
+- Coding standards for all AI assistants: @.ai/shared/coding-standards.md
+
+Project skills live in `.claude/skills/<skill-name>/SKILL.md`.
 
 ## Important Notes
 

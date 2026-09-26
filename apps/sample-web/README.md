@@ -66,11 +66,12 @@ Copy `.env.example` to `.env` and configure:
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `VITE_API_URL` | Backend API base URL | `http://localhost:8080` |
+| `VITE_API_URL` | Backend API base URL, baked in at build time | `/api` (same-origin proxy) |
 
 ## Connecting to the API
 
-The dev server proxies `/api` requests to the backend:
+The app calls the API at `/api` on its own origin. The Vite dev server and the nginx
+container both proxy `/api/*` to the backend (stripping the `/api` prefix):
 
 ```typescript
 // Direct usage via the API client

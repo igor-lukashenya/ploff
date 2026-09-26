@@ -19,7 +19,8 @@ applications, shared packages, infrastructure code, and documentation.
 │   └── release-notes/     # Changelogs and release notes
 ├── .github/               # GitHub Actions, Copilot config, templates
 ├── .azure/                # Azure DevOps pipeline definitions
-├── .ai/                   # AI assistant instructions (Claude, etc.)
+├── .ai/                   # Shared AI assistant instructions
+├── .claude/               # Claude Code skills and settings
 └── Makefile               # Common commands (universal task runner)
 ```
 
@@ -101,8 +102,8 @@ Configuration for AI coding assistants:
 
 | Assistant | Configuration |
 | --- | --- |
-| **Claude Code** | `CLAUDE.md` (root) + `.ai/claude/` |
-| **GitHub Copilot** | `.github/copilot/instructions.md` |
+| **Claude Code** | `CLAUDE.md` (root) + `.claude/` + `.ai/` |
+| **GitHub Copilot** | `.github/copilot-instructions.md` |
 
 ## Contributing
 
