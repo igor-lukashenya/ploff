@@ -33,7 +33,8 @@ cd "$WORK_DIR"
 
 export GIT_AUTHOR_NAME="generator-test" GIT_AUTHOR_EMAIL="generator-test@localhost"
 export GIT_COMMITTER_NAME="$GIT_AUTHOR_NAME" GIT_COMMITTER_EMAIL="$GIT_AUTHOR_EMAIL"
-git init -q && git add -A && git commit -q -m "chore: scratch copy"
+# The branch must match vcs.defaultBranch: in CI, moon compares against it
+git init -q -b main && git add -A && git commit -q -m "chore: scratch copy"
 
 # Remove sample apps and everything that references them
 rm -rf apps/sample-*
@@ -63,6 +64,28 @@ done
 
 echo "━━━ build, lint, typecheck, test: ${GENERATED[*]}"
 moon run :build :lint :typecheck :test --summary minimal
+
+# Guard against a vacuous pass (e.g. moon deciding tasks are unaffected or
+# skipping them): fail unless every check task of every generated project ran.
+node - "${GENERATED[@]}" <<'JS'
+const fs = require('fs');
+const { execSync } = require('child_process');
+const ids = process.argv.slice(2);
+const { tasks } = JSON.parse(execSync('moon query tasks', { encoding: 'utf8' }));
+const report = JSON.parse(fs.readFileSync('.moon/cache/runReport.json', 'utf8'));
+const ran = new Set(
+  report.actions.filter((a) => ['passed', 'cached'].includes(a.status)).map((a) => a.label),
+);
+const expected = ids.flatMap((id) =>
+  ['build', 'lint', 'typecheck', 'test'].filter((t) => tasks[id]?.[t]).map((t) => `${id}:${t}`),
+);
+const missing = expected.filter((target) => !ran.has(`RunTask(${target})`));
+if (missing.length) {
+  console.error(`✗ These tasks did not run: ${missing.join(', ')}`);
+  process.exit(1);
+}
+console.log(`Verified ${expected.length} tasks ran across ${ids.length} generated projects`);
+JS
 
 if $DOCKER; then
   for name in "${GENERATED[@]}"; do
