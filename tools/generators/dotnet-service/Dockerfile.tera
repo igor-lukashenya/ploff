@@ -27,6 +27,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends curl && rm -rf 
 
 COPY --from=build /app/publish .
 
+# Run as the non-root 'app' user that ships with the .NET runtime images
+USER app
+
 ENV ASPNETCORE_URLS=http://+:8080
 EXPOSE 8080
 
