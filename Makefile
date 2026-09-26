@@ -183,6 +183,14 @@ new-package: ## Scaffold a shared package (usage: make new-package STACK=dotnet-
 	@if [ -z "$(STACK)" ] || [ -z "$(NAME)" ]; then echo "$(RED)Error: Set STACK and NAME (e.g., make new-package STACK=dotnet-library NAME=shared-kernel). See 'make stacks'.$(RESET)"; exit 1; fi
 	bash tools/scripts/new-project.sh package $(STACK) $(NAME)
 
+.PHONY: check-commits
+check-commits: ## Check that commits since origin/main are Conventional Commits
+	bash tools/scripts/check-conventional.sh --range origin/main..HEAD
+
+.PHONY: test-generators
+test-generators: ## Generate one project per stack in a scratch copy and verify it
+	bash tools/scripts/test-generators.sh
+
 .PHONY: sync-templates
 sync-templates: ## Copy dependency versions from the sample apps into generator templates
 	bash tools/scripts/sync-templates.sh

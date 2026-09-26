@@ -30,6 +30,9 @@ Below 1.0.0, `feat` bumps the patch version and breaking changes bump the minor 
 | `deps(<app>): …` | Dependabot updates | Patch |
 | `docs`, `ci`, `chore`, `test`, `refactor` | | No release |
 
+The **Conventional Commits** workflow rejects PRs whose title or commits don't follow this
+format (`make check-commits` runs the same check locally).
+
 Release Please attributes a commit to an app by the **files it changes** (`apps/<app>/`), so
 the scope is for readability. Commits that only change `packages/` don't release any app;
 see [Shared packages](#shared-packages).

@@ -1,0 +1,38 @@
+# GitHub Actions - Conventional Commits
+#
+# Release Please computes each app's version and changelog from commit messages
+# (docs/guides/release-process.md), so every commit that lands on main must be a
+# Conventional Commit. This checks, on every pull request:
+#   - each non-merge commit (what Release Please reads for merge commits/rebases)
+#   - the PR title (what becomes the commit message for squash merges)
+#
+# Add "Conventional Commits" as a required status check next to "CI Gate".
+
+name: Conventional Commits
+
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+
+permissions:
+  contents: read
+
+jobs:
+  commits:
+    name: Conventional Commits
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Check PR title
+        env:
+          TITLE: ${{ github.event.pull_request.title }}
+        run: bash tools/scripts/check-conventional.sh --title "$TITLE"
+
+      - name: Check commit messages
+        env:
+          BASE: ${{ github.event.pull_request.base.sha }}
+          HEAD: ${{ github.event.pull_request.head.sha }}
+        run: bash tools/scripts/check-conventional.sh --range "$BASE..$HEAD"
