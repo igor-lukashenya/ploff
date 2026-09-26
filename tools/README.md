@@ -20,6 +20,8 @@ tools/
 | `refresh-release-prs.sh` | - (CI) | Merge `main` into open release PRs and resolve `.release-please-manifest.json` conflicts |
 | `test-generators.sh` | `make test-generators` | Generate one project per stack in a scratch copy and build/lint/test it (CI: `--docker` too) |
 | `check-conventional.sh` | `make check-commits` | Validate Conventional Commit messages (PR title, commit range, or commit-msg file) |
+| `install-scanners.sh` | `make install-scanners` | Install pinned, checksum-verified gitleaks and trivy |
+| `scan-security.sh` | `make scan` | Secret scan (history, staged, range) and Trivy dependency/IaC scan |
 | `sync-templates.sh` | `make sync-templates` | Copy dependency versions from the sample apps into generator templates (`--check` reports drift; CI warns) |
 
 All scripts are Bash (on Windows, use WSL or the devcontainer).

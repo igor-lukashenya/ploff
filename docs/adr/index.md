@@ -15,6 +15,7 @@ onboarding and future discussions.
 | [001](001-monorepo-structure.md) | Monorepo Structure | Accepted | 2026-04-18 |
 | [002](002-git-branching-strategy.md) | Git Branching Strategy | Accepted | 2026-05-22 |
 | [003](003-monorepo-tooling.md) | Monorepo Tooling: moon, Release Please and Generators | Accepted | 2026-09-26 |
+| [004](004-security-scanning.md) | Security Scanning and CI Supply-Chain Hardening | Accepted | 2026-09-27 |
 
 ## Creating a New ADR
 

@@ -8,8 +8,8 @@ RUN npm ci
 COPY apps/sample-web/ ./
 RUN npm run build
 
-# Stage 2: Serve with nginx
-FROM nginx:alpine AS production
+# Stage 2: Serve with nginx (unprivileged image: runs as uid 101, listens on 8080)
+FROM nginxinc/nginx-unprivileged:alpine AS production
 COPY --from=build /app/dist /usr/share/nginx/html
 COPY infra/docker/nginx-sample-web.conf /etc/nginx/templates/default.conf.template
 
@@ -19,6 +19,8 @@ ENV NGINX_ENTRYPOINT_LOCAL_RESOLVERS=1
 # Backend that /api/* is proxied to (override at runtime)
 ENV API_UPSTREAM=http://sample-api:8080
 
-EXPOSE 80
+USER 101
+
+EXPOSE 8080
 
 CMD ["nginx", "-g", "daemon off;"]

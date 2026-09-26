@@ -1,0 +1,25 @@
+# Trivy configuration - used by `make scan` and CI (.github/workflows/security.yml)
+# Docs: https://trivy.dev/latest/docs/references/configuration/config-file/
+#
+# Fails on HIGH/CRITICAL findings that have a fix available. To accept a finding,
+# add its ID to .trivyignore with a comment explaining why.
+
+scan:
+  scanners:
+    - vuln        # known vulnerabilities in lockfiles (npm, NuGet, ...)
+    - misconfig   # Dockerfiles, Kubernetes manifests, Terraform
+  skip-dirs:
+    - "**/node_modules"
+    - "**/bin"
+    - "**/obj"
+    - "**/dist"
+    - "tools/generators"   # templates are verified through generated projects
+
+severity:
+  - HIGH
+  - CRITICAL
+
+vulnerability:
+  ignore-unfixed: true
+
+exit-code: 1

@@ -48,6 +48,18 @@ All contributors should follow these practices:
 - **Principle of least privilege** — Services and users get only the permissions they need
 - **Audit logging** — Log security-relevant events (auth, access control, config changes)
 
+## Automated Security Checks
+
+| Check | Where | Fails on |
+| --- | --- | --- |
+| Secret scanning (gitleaks) | pre-commit hook, CI on every PR/push | Any detected secret |
+| Dependency and IaC scanning (Trivy) | CI on every PR/push, weekly | HIGH/CRITICAL findings with a fix |
+| NuGet audit | every .NET restore/build (`Directory.Build.props`) | HIGH/CRITICAL vulnerable packages |
+| CodeQL (C#, TypeScript) | PRs, `main`, weekly | Reported under Security → Code scanning |
+| Dependabot | weekly PRs | - |
+
+Details, local commands and how to handle findings: [Security Guide](docs/guides/security.md).
+
 ## Dependency Management
 
 This repository uses automated dependency updates. Security patches should be reviewed and merged promptly.

@@ -54,6 +54,8 @@ setup: ## Install pinned toolchains (.prototools) and project dependencies
 	proto install
 	$(MOON) setup
 	$(MOON) sync
+	$(MOON) sync hooks
+	@command -v gitleaks >/dev/null 2>&1 || echo "$(YELLOW)Tip: run 'make install-scanners' to enable the secret-scanning pre-commit hook.$(RESET)"
 	@echo "$(GREEN)Toolchains ready. Run 'make check' to verify.$(RESET)"
 
 # ---- Build / Test / Lint (all projects) ----
@@ -182,6 +184,15 @@ new-app: ## Scaffold a new app (usage: make new-app STACK=dotnet-service NAME=or
 new-package: ## Scaffold a shared package (usage: make new-package STACK=dotnet-library NAME=shared-kernel)
 	@if [ -z "$(STACK)" ] || [ -z "$(NAME)" ]; then echo "$(RED)Error: Set STACK and NAME (e.g., make new-package STACK=dotnet-library NAME=shared-kernel). See 'make stacks'.$(RESET)"; exit 1; fi
 	bash tools/scripts/new-project.sh package $(STACK) $(NAME)
+
+.PHONY: install-scanners
+install-scanners: ## Install pinned, checksum-verified gitleaks and trivy into ~/.local/bin
+	bash tools/scripts/install-scanners.sh
+
+.PHONY: scan
+scan: ## Scan git history for secrets and dependencies/IaC for vulnerabilities
+	bash tools/scripts/scan-security.sh secrets
+	bash tools/scripts/scan-security.sh vulns
 
 .PHONY: check-commits
 check-commits: ## Check that commits since origin/main are Conventional Commits

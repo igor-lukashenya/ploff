@@ -38,8 +38,11 @@ See the root [README.md](../index.md) for the full structure.
 # One-time: install proto (toolchain manager), then restart your shell
 curl -fsSL https://moonrepo.dev/install/proto.sh | bash
 
-# Install moon + Node.js (pinned in .prototools) and sync the workspace
+# Install moon + Node.js (pinned in .prototools), sync the workspace and git hooks
 make setup
+
+# Security scanners for the pre-commit hook and `make scan` (pinned, checksum-verified)
+make install-scanners
 
 # Lint, type-check and test every project
 make check

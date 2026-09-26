@@ -117,3 +117,4 @@ site/
 # ─── moon ────────────────────────────────────
 .moon/cache/
 .moon/docker/
+.moon/hooks/

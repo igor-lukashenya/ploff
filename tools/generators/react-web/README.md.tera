@@ -21,7 +21,7 @@ Run from the repository root:
 | `make run APP={{ name }} TASK=lint` | Lint |
 | `make run APP={{ name }} TASK=typecheck` | Type-check |
 | `make run APP={{ name }} TASK=build` | Production build to `dist/` |
-| `make up` | Run in Docker Compose (nginx, port {{ port }}) |
+| `make up` | Run in Docker Compose (unprivileged nginx, port {{ port }}) |
 
 ## Calling the API
 
