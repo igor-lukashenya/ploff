@@ -60,7 +60,7 @@ jobs:
     env:
       APP: ${{ inputs.app }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: actions/setup-dotnet@v4
         with:
@@ -94,7 +94,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Download artifact
         uses: actions/download-artifact@v4
