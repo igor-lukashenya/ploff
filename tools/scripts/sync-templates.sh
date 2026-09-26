@@ -11,6 +11,8 @@
 # The sample apps are the source of truth:
 #   apps/sample-api  -> NuGet versions in every generator .csproj template
 #   apps/sample-web  -> package.json + package-lock.json of the react-web template
+#                       (name and version reset for new apps), and every
+#                       verbatim .raw file of the react-web template
 # Samples that no longer exist (e.g. removed in a client repo) are skipped.
 
 set -euo pipefail
@@ -45,10 +47,29 @@ fi
 
 # ─── npm manifest + lockfile from sample-web ────────────────────────────────
 
+# New apps start at 0.1.0 with the template's name placeholder, whatever version
+# sample-web has been released as.
 if [ -f apps/sample-web/package.json ] && [ -d "$OUT/react-web" ]; then
   for file in package.json package-lock.json; do
-    sed 's/"name": "sample-web"/"name": "{{ name }}"/' "apps/sample-web/$file" > "$OUT/react-web/$file.tera"
+    node - "apps/sample-web/$file" "$OUT/react-web/$file.tera" <<'JS'
+const fs = require('fs');
+const [src, dest] = process.argv.slice(2);
+const json = JSON.parse(fs.readFileSync(src, 'utf8'));
+const reset = (entry) => Object.assign(entry, { name: '{{ name }}', version: '0.1.0' });
+reset(json);
+if (json.packages?.['']) reset(json.packages['']);
+fs.writeFileSync(dest, JSON.stringify(json, null, 2) + '\n');
+JS
   done
+
+  # Verbatim (.raw) template files are exact copies of sample-web files
+  while IFS= read -r raw; do
+    rel="${raw#"$OUT/react-web/"}"
+    rel="${rel%.raw}"
+    if [ -f "apps/sample-web/$rel" ]; then
+      cp "apps/sample-web/$rel" "$raw"
+    fi
+  done < <(find "$OUT/react-web" -name '*.raw' -type f)
 fi
 
 # ─── Report / apply ──────────────────────────────────────────────────────────
