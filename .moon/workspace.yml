@@ -13,6 +13,15 @@ vcs:
   client: 'git'
   provider: 'github'
   defaultBranch: 'main'
+  # Git hooks, installed by `make setup` (moon sync hooks). Kept fast on purpose:
+  # full lint/test runs in CI. Skip once with `git commit --no-verify`.
+  hooks:
+    pre-commit:
+      # Secrets in staged changes (skipped with a hint if gitleaks isn't installed)
+      - 'bash tools/scripts/scan-security.sh secrets --staged'
+    commit-msg:
+      # Release Please needs Conventional Commits
+      - 'bash tools/scripts/check-conventional.sh --file $ARG1'
 
 # Apps may depend on libraries, never on other apps (see apps/README.md).
 constraints:

@@ -33,19 +33,19 @@ jobs:
     name: moon ci
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           # Full history is required for affected-project detection
           fetch-depth: 0
           filter: 'blob:none'
 
       # .NET has no moon toolchain plugin; the SDK version comes from global.json
-      - uses: actions/setup-dotnet@v6
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
         with:
           global-json-file: global.json
 
       # Installs proto, moon and the tools pinned in .prototools (Node.js)
-      - uses: moonrepo/setup-toolchain@v0
+      - uses: moonrepo/setup-toolchain@261c62cb5b0f580c7be7c8cd0f023a2e96756095 # v0.6.4
         with:
           auto-install: true
 
@@ -63,7 +63,7 @@ jobs:
             echo "::warning title=Generator templates out of sync::Run 'make sync-templates' and commit the result."
           fi
 
-      - uses: moonrepo/run-report-action@v1
+      - uses: moonrepo/run-report-action@bbe7e99bf2aca819ec660ec01fc59d84bdd492d6 # v1.10.0
         if: success() || failure()
         with:
           access-token: ${{ secrets.GITHUB_TOKEN }}
@@ -76,9 +76,9 @@ jobs:
       docs: ${{ steps.filter.outputs.docs }}
       templates: ${{ steps.filter.outputs.templates }}
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - uses: dorny/paths-filter@v4
+      - uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v4.0.3
         id: filter
         with:
           filters: |
@@ -92,6 +92,7 @@ jobs:
               - '.moon/**'
               - '.prototools'
               - 'global.json'
+              - 'Directory.*.props'
 
   # ---- Docs: Build ----
   docs:
@@ -100,9 +101,9 @@ jobs:
     if: needs.changes.outputs.docs == 'true'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - uses: actions/setup-python@v7
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: '3.12'
 
@@ -119,25 +120,72 @@ jobs:
     if: needs.changes.outputs.templates == 'true'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - uses: actions/setup-dotnet@v6
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
         with:
           global-json-file: global.json
 
-      - uses: moonrepo/setup-toolchain@v0
+      - uses: moonrepo/setup-toolchain@261c62cb5b0f580c7be7c8cd0f023a2e96756095 # v0.6.4
         with:
           auto-install: true
 
       - name: Generate and verify every stack
         run: bash tools/scripts/test-generators.sh --docker
 
+  # ---- Security: secrets in the pushed commits ----
+  # Scanners run as pinned, checksum-verified binaries (tools/scripts/install-scanners.sh)
+  # in jobs without secrets - see docs/guides/security.md.
+  secrets:
+    name: secret scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Install scanners
+        run: |
+          bash tools/scripts/install-scanners.sh "$RUNNER_TEMP/bin"
+          echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
+
+      - name: Scan commits for secrets
+        env:
+          EVENT: ${{ github.event_name }}
+          PR_BASE: ${{ github.event.pull_request.base.sha }}
+          PR_HEAD: ${{ github.event.pull_request.head.sha }}
+          PUSH_BEFORE: ${{ github.event.before }}
+        run: |
+          if [ "$EVENT" = "pull_request" ]; then
+            bash tools/scripts/scan-security.sh secrets --range "$PR_BASE..$PR_HEAD"
+          elif [ -n "$PUSH_BEFORE" ] && ! [[ "$PUSH_BEFORE" =~ ^0+$ ]]; then
+            bash tools/scripts/scan-security.sh secrets --range "$PUSH_BEFORE..$GITHUB_SHA"
+          else
+            bash tools/scripts/scan-security.sh secrets
+          fi
+
+  # ---- Security: vulnerable dependencies and IaC misconfigurations ----
+  vulnerabilities:
+    name: vulnerability scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Install scanners
+        run: |
+          bash tools/scripts/install-scanners.sh "$RUNNER_TEMP/bin"
+          echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
+
+      # Settings in trivy.yaml; accepted findings in .trivyignore
+      - name: Scan dependencies and IaC
+        run: bash tools/scripts/scan-security.sh vulns
+
   # ---- CI Gate (the single required status check) ----
   ci-gate:
     name: CI Gate
     runs-on: ubuntu-latest
     if: always()
-    needs: [moon, changes, docs, templates]
+    needs: [moon, changes, docs, templates, secrets, vulnerabilities]
     steps:
       - name: Check results
         run: |
@@ -146,7 +194,9 @@ jobs:
             "moon=${{ needs.moon.result }}" \
             "changes=${{ needs.changes.result }}" \
             "docs=${{ needs.docs.result }}" \
-            "templates=${{ needs.templates.result }}"; do
+            "templates=${{ needs.templates.result }}" \
+            "secrets=${{ needs.secrets.result }}" \
+            "vulnerabilities=${{ needs.vulnerabilities.result }}"; do
             echo "$result"
             # skipped is fine (nothing affected); failure/cancelled is not
             if [[ "${result#*=}" =~ ^(failure|cancelled)$ ]]; then
