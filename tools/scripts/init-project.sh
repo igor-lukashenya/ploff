@@ -1,12 +1,18 @@
 #!/usr/bin/env bash
 #
-# init-project.sh — Personalize this template for your new project
+# init-project.sh — Turn a copy of this template into a new solution
 #
 # Usage:
 #   bash tools/scripts/init-project.sh
 #
-# This script replaces the template name (Ploff/ploff) with your project's values.
-# Run it once after cloning/creating from the template.
+# Run it once, right after creating the repository from the template
+# (see docs/guides/new-solution.md). It:
+#   - replaces the template name (Ploff/ploff) with the solution's name and slug
+#   - removes the sample apps (or keeps them with versions reset to 0.1.0)
+#   - resets the changelog and, optionally, the git history
+#   - prints the GitHub settings the new repository needs
+#
+# Needs only Bash, git and perl (no Node.js/.NET - it runs before `make setup`).
 
 set -euo pipefail
 
@@ -48,17 +54,64 @@ CURRENT_YEAR=$(date +%Y)
 read -rp "Copyright holder (e.g., Your Name or Company) []: " COPYRIGHT_HOLDER
 COPYRIGHT_HOLDER="${COPYRIGHT_HOLDER:-$DISPLAY_NAME}"
 
+read -rp "Remove the sample apps (sample-api, sample-web)? Generators don't need them (Y/n): " REMOVE_SAMPLES_INPUT
+if [[ "$REMOVE_SAMPLES_INPUT" =~ ^[nN]$ ]]; then REMOVE_SAMPLES=false; else REMOVE_SAMPLES=true; fi
+
 echo ""
 echo -e "${YELLOW}Summary:${NC}"
 echo -e "  Display name:      ${GREEN}${DISPLAY_NAME}${NC}"
 echo -e "  Slug:              ${GREEN}${SLUG}${NC}"
 echo -e "  Copyright:         ${GREEN}© ${CURRENT_YEAR} ${COPYRIGHT_HOLDER}${NC}"
+if $REMOVE_SAMPLES; then
+  echo -e "  Sample apps:       ${GREEN}remove${NC}"
+else
+  echo -e "  Sample apps:       ${GREEN}keep (versions reset to 0.1.0)${NC}"
+fi
 echo ""
 
 read -rp "Proceed? (y/N): " CONFIRM
 if [[ ! "$CONFIRM" =~ ^[yY]$ ]]; then
   echo "Aborted."
   exit 0
+fi
+
+cd "$REPO_ROOT"
+
+# ─── Sample apps ─────────────────────────────────────────────────────────────
+
+echo ""
+if $REMOVE_SAMPLES; then
+  bash tools/scripts/remove-samples.sh
+else
+  # A new solution starts at 0.1.0, not at the template's released versions
+  echo -e "${BLUE}Resetting sample app versions to 0.1.0...${NC}"
+  perl -pi -e 's/("apps\/[^"]+":\s*")[^"]*"/${1}0.1.0"/g' .release-please-manifest.json
+  for csproj in apps/*/src/*/*.csproj; do
+    [ -f "$csproj" ] && perl -pi -e 's|<Version>[^<]*</Version>|<Version>0.1.0</Version>|' "$csproj"
+  done
+  for pkg in apps/*/package.json; do
+    [ -f "$pkg" ] && perl -0pi -e 's/("version":\s*")[^"]*"/${1}0.1.0"/' "$pkg"
+  done
+  for lock in apps/*/package-lock.json; do
+    # root "version" and packages[""].version
+    [ -f "$lock" ] && perl -0pi -e 's/("version":\s*")[^"]*"/${1}0.1.0"/; s/(""\s*:\s*\{[^{}]*?"version":\s*")[^"]*"/${1}0.1.0"/' "$lock"
+  done
+  rm -f apps/*/CHANGELOG.md
+  echo -e "  ✅ versions, manifest and changelogs"
+fi
+
+# ─── Changelog ───────────────────────────────────────────────────────────────
+
+if [ -f docs/release-notes/CHANGELOG.md ]; then
+  cat > docs/release-notes/CHANGELOG.md <<'CHANGELOG'
+# Changelog
+
+Solution-level release notes. Each app's changes are recorded in its own
+`apps/<app>/CHANGELOG.md`, maintained by Release Please.
+
+## [Unreleased]
+CHANGELOG
+  echo -e "  ✅ docs/release-notes/CHANGELOG.md reset"
 fi
 
 # ─── Replace template name in git-tracked files ──────────────────────────────
@@ -70,8 +123,6 @@ fi
 
 echo ""
 echo -e "${BLUE}Replacing template name...${NC}"
-
-cd "$REPO_ROOT"
 
 if ! git grep -qI 'Ploff\|ploff' -- ':!tools/scripts/init-project.sh'; then
   echo -e "${YELLOW}No template references found - project already initialized?${NC}"
@@ -111,19 +162,41 @@ echo ""
 read -rp "Reset git history for a fresh start? (y/N): " RESET_GIT
 if [[ "$RESET_GIT" =~ ^[yY]$ ]]; then
   rm -rf .git
-  git init
+  git init -q -b main
   git add -A
-  git commit -m "feat: initial project setup from Project LiftOff template"
+  git commit -q --no-verify -m "chore: initial solution setup from template"
   echo -e "${GREEN}Git history reset with initial commit.${NC}"
 fi
 
 # ─── Done ────────────────────────────────────────────────────────────────────
 
+# GitHub settings links, if the origin remote points at GitHub
+REPO_URL=""
+if ORIGIN=$(git remote get-url origin 2>/dev/null); then
+  REPO_PATH=$(echo "$ORIGIN" | sed -nE 's#^(https://github\.com/|git@github\.com:)([^/]+/[^/]+)$#\2#p' | sed 's/\.git$//')
+  [ -n "$REPO_PATH" ] && REPO_URL="https://github.com/$REPO_PATH"
+fi
+link() { if [ -n "$REPO_URL" ]; then echo "     $REPO_URL/$1"; fi; }
+
 echo ""
-echo -e "${GREEN}🎉 Project '${DISPLAY_NAME}' initialized successfully!${NC}"
+echo -e "${GREEN}🎉 Solution '${DISPLAY_NAME}' initialized!${NC}"
 echo ""
-echo "Next steps:"
-echo "  1. Review the changes: git diff"
-echo "  2. Set the remote: git remote add origin <your-repo-url>"
-echo "  3. Push: git push -u origin main"
-echo "  4. Run: make setup && make up"
+echo "Next steps (details: docs/guides/new-solution.md):"
+echo ""
+echo "  1. Review and commit:  git status && git add -A && git commit -m \"chore: initialize solution\""
+[ -z "$REPO_URL" ] && echo "     Then add the remote: git remote add origin <repo-url> && git push -u origin main"
+echo "  2. Toolchains:         install proto once, open a new terminal, then:"
+echo "                         make setup && make install-scanners"
+echo "  3. First apps:         make stacks && make new-app STACK=<stack> NAME=<name>"
+echo ""
+echo "  GitHub settings for the new repository:"
+echo "  4. Actions → General → Workflow permissions: allow GitHub Actions to create and approve pull requests"
+link "settings/actions"
+echo "  5. Pages → Source: GitHub Actions (documentation site)"
+link "settings/pages"
+echo "  6. Secret RELEASE_PLEASE_TOKEN (fine-grained token: Contents, Pull requests, Issues)"
+link "settings/secrets/actions"
+echo "  7. Branch rule for main: require 'CI Gate' and 'Conventional Commits'"
+link "settings/rules"
+echo "  8. Private repository with GitHub Code Security? Set variable ENABLE_CODEQL=true"
+link "settings/variables/actions"

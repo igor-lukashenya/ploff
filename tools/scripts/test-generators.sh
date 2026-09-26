@@ -36,12 +36,8 @@ export GIT_COMMITTER_NAME="$GIT_AUTHOR_NAME" GIT_COMMITTER_EMAIL="$GIT_AUTHOR_EM
 # The branch must match vcs.defaultBranch: in CI, moon compares against it
 git init -q -b main && git add -A && git commit -q -m "chore: scratch copy"
 
-# Remove sample apps and everything that references them
-rm -rf apps/sample-*
-rm -f infra/docker/compose.sample-*.yml infra/docker/Dockerfile.sample-* infra/docker/nginx-sample-*.conf
-for sln in ./*.slnx; do
-  [ -f "$sln" ] && printf '<Solution>\n</Solution>\n' > "$sln"
-done
+# Start like a new solution: without the sample apps (also tests remove-samples.sh)
+bash tools/scripts/remove-samples.sh > /dev/null
 
 # ─── Generate one project per stack ──────────────────────────────────────────
 

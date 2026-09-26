@@ -52,7 +52,14 @@ jobs:
       # --include-relations + --downstream deep: when a shared package changes,
       # also build/lint/test every project that depends on it (moon.yml dependsOn)
       - name: Run affected tasks
-        run: moon ci --include-relations --downstream deep
+        run: |
+          # moon fails in a workspace without projects (e.g. a new solution before
+          # its first `make new-app`); nothing to check then
+          if ! compgen -G "apps/*/moon.yml" > /dev/null && ! compgen -G "packages/*/moon.yml" > /dev/null; then
+            echo "No moon projects yet - skipping."
+            exit 0
+          fi
+          moon ci --include-relations --downstream deep
 
       # Dependabot updates the sample apps but can't see tools/generators/.
       # Non-blocking so Dependabot PRs stay mergeable; fix with `make sync-templates`.
@@ -89,6 +96,7 @@ jobs:
               - 'tools/generators/**'
               - 'tools/scripts/new-project.sh'
               - 'tools/scripts/test-generators.sh'
+              - 'tools/scripts/remove-samples.sh'
               - '.moon/**'
               - '.prototools'
               - 'global.json'

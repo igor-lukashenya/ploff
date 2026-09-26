@@ -27,6 +27,11 @@ applications, shared packages, infrastructure code, and documentation.
 
 ## Quick Start
 
+**Starting a new solution?** Create a repository with **Use this template**, then follow
+[Starting a New Solution](docs/guides/new-solution.md) (`bash tools/scripts/init-project.sh`).
+
+Working on an existing solution:
+
 ```bash
 # Clone the repository
 git clone <repo-url>
