@@ -2,6 +2,8 @@
 
 Welcome to the project! This guide will help you set up your development environment.
 
+> Starting a **new solution** from this template? Follow [Starting a New Solution](new-solution.md) first.
+
 ## Prerequisites
 
 - [Git](https://git-scm.com/) (2.x+)
