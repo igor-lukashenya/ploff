@@ -129,7 +129,8 @@ Every .NET project uses `<Name>.slnx` + `src/<Name>/` + `tests/<Name>.Tests/`, s
 - **No .NET toolchain in moon**: the .NET SDK is managed separately (`global.json` +
   `actions/setup-dotnet`), and .NET build outputs are not cached by moon.
 - **Template maintenance**: generator templates (including the `react-web` lockfile) must be
-  kept in sync with the sample apps and dependency updates.
+  kept in sync with the sample apps and dependency updates. Dependabot only updates the sample
+  apps; `make sync-templates` copies their versions into the templates, and CI warns on drift.
 - **Pre-1.0 GitHub Actions**: `moonrepo/setup-toolchain` is on `v0`.
 - **Package changes don't create app releases**: Release Please attributes commits to an app
   by path only (it has no option to watch dependency paths). A change only inside

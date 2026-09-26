@@ -186,6 +186,13 @@ if [ -n "$ECOSYSTEM" ] && grep -qF "$MARKER" "$DEPENDABOT"; then
       $ECOSYSTEM-minor-patch:
         update-types: [\"minor\", \"patch\"]
 "
+  if [ "$ECOSYSTEM" = "npm" ]; then
+    ENTRY="$ENTRY    ignore:
+      # Must match the Node.js runtime in .prototools - see policy at the top
+      - dependency-name: \"@types/node\"
+        update-types: [\"version-update:semver-major\"]
+"
+  fi
   ENTRY="$ENTRY" MARKER="$MARKER" perl -0pi -e 's/^\Q$ENV{MARKER}\E$/$ENV{ENTRY}\n$ENV{MARKER}/m' "$DEPENDABOT"
   step "$DEPENDABOT"
 fi

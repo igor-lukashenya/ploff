@@ -4,6 +4,17 @@
 #
 # Dependabot creates PRs to keep dependencies up to date.
 # Customize the schedule and package ecosystems for your apps.
+#
+# Update policy:
+#   - GitHub Actions: all updates grouped into one weekly PR
+#   - Minor/patch library updates: grouped per app
+#   - Major library updates: one PR each - merge only when CI passes
+#   - Runtimes (Node.js, .NET) are NOT upgraded by Dependabot: images and
+#     @types/node ignore major versions (this also filters out preview tags such
+#     as 11.0-preview). Upgrade a runtime deliberately in one PR, together with
+#     .prototools, global.json, all Dockerfiles, tools/generators and @types/node.
+#   - Dependabot does not see tools/generators/: after merging updates to a sample
+#     app, run `make sync-templates` (CI shows a warning while templates drift).
 
 version: 2
 
@@ -19,6 +30,9 @@ updates:
     labels:
       - "dependencies"
       - "ci"
+    groups:
+      github-actions:
+        patterns: ["*"]
 
   # ─── Docker ────────────────────────────────────────────────────────────────
   - package-ecosystem: "docker"
@@ -30,6 +44,10 @@ updates:
     labels:
       - "dependencies"
       - "docker"
+    ignore:
+      # Runtime majors (and preview tags) are upgraded deliberately - see policy above
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
 
   # ─── Documentation (MkDocs) ────────────────────────────────────────────────
   - package-ecosystem: "pip"
@@ -81,6 +99,10 @@ updates:
     groups:
       npm-minor-patch:
         update-types: ["minor", "patch"]
+    ignore:
+      # Must match the Node.js runtime in .prototools - see policy above
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
 
   # new-project.sh inserts entries for new apps/packages above this line
 
