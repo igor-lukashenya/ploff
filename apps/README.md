@@ -14,6 +14,9 @@ apps/
 └── ...
 ```
 
+The sample apps are removed when a new solution is initialized (`init-project.sh`, or
+`make remove-samples` later); the generators don't depend on them.
+
 ## Adding a New Application
 
 Scaffold it from a generator:

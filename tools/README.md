@@ -14,7 +14,8 @@ tools/
 
 | Script | Make target | Description |
 | --- | --- | --- |
-| `init-project.sh` | - | Personalize the template for a new solution (name, license) |
+| `init-project.sh` | - | Turn the template into a new solution: name, license, sample removal, settings checklist |
+| `remove-samples.sh` | `make remove-samples` | Remove the sample apps and all their registrations |
 | `new-project.sh` | `make new-app` / `make new-package` | Generate a project from a template and register it |
 | `new-adr.sh` | `make new-adr` | Create a new ADR from the template |
 | `refresh-release-prs.sh` | - (CI) | Merge `main` into open release PRs and resolve `.release-please-manifest.json` conflicts |

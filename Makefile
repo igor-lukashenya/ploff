@@ -25,6 +25,13 @@ COMPOSE_FILES := infra/docker/docker-compose.yml $(sort $(wildcard infra/docker/
 DOCKER_COMPOSE := docker compose $(addprefix -f ,$(COMPOSE_FILES)) -p $(PROJECT_NAME)
 MOON := moon
 
+# moon fails when the workspace has no projects (e.g. right after the sample apps
+# are removed), so project-wide commands print a hint instead in that case.
+PROJECTS := $(wildcard apps/*/moon.yml packages/*/moon.yml)
+moon_all = @if [ -z "$(strip $(PROJECTS))" ]; then \
+	echo "$(YELLOW)No projects yet - create one with 'make new-app STACK=<stack> NAME=<name>' (see 'make stacks').$(RESET)"; \
+	else $(MOON) $(1); fi
+
 # Colors for terminal output
 BLUE   := \033[36m
 GREEN  := \033[32m
@@ -47,10 +54,18 @@ help: ## Show this help message
 
 .PHONY: setup
 setup: ## Install pinned toolchains (.prototools) and project dependencies
-	@command -v proto >/dev/null 2>&1 || { \
-		echo "$(RED)proto is not installed.$(RESET) Install it, then re-run 'make setup':"; \
-		echo "  curl -fsSL https://moonrepo.dev/install/proto.sh | bash"; \
-		echo "See docs/guides/getting-started.md"; exit 1; }
+	@if ! command -v proto >/dev/null 2>&1; then \
+		if [ -x "$$HOME/.proto/bin/proto" ]; then \
+			echo "$(RED)proto is installed but not on your PATH.$(RESET) Open a new terminal (or run 'exec $$SHELL'),"; \
+			echo "or add this to your shell profile:"; \
+			echo '  export PATH="$$HOME/.proto/shims:$$HOME/.proto/bin:$$PATH"'; \
+		else \
+			echo "$(RED)proto is not installed.$(RESET) Install it (answer 'yes' to updating your shell profile):"; \
+			echo "  curl -fsSL https://moonrepo.dev/install/proto.sh | bash"; \
+			echo "Then open a NEW terminal and re-run 'make setup'. See docs/guides/getting-started.md"; \
+		fi; \
+		exit 1; \
+	fi
 	proto install
 	$(MOON) setup
 	$(MOON) sync
@@ -62,31 +77,31 @@ setup: ## Install pinned toolchains (.prototools) and project dependencies
 
 .PHONY: build
 build: ## Build all projects
-	$(MOON) run :build
+	$(call moon_all,run :build)
 
 .PHONY: test
 test: ## Run all tests
-	$(MOON) run :test
+	$(call moon_all,run :test)
 
 .PHONY: lint
 lint: ## Run all linters
-	$(MOON) run :lint
+	$(call moon_all,run :lint)
 
 .PHONY: typecheck
 typecheck: ## Type-check all projects that support it
-	$(MOON) run :typecheck
+	$(call moon_all,run :typecheck)
 
 .PHONY: format
 format: ## Apply formatting fixes in all projects
-	$(MOON) run :format
+	$(call moon_all,run :format)
 
 .PHONY: check
 check: ## Lint, type-check and test all projects (run before committing)
-	$(MOON) run :lint :typecheck :test
+	$(call moon_all,run :lint :typecheck :test)
 
 .PHONY: ci
 ci: ## Run only tasks affected by your changes, incl. dependents (same as CI)
-	$(MOON) ci --include-relations --downstream deep
+	$(call moon_all,ci --include-relations --downstream deep)
 
 # ---- Single project ----
 
@@ -205,6 +220,10 @@ test-generators: ## Generate one project per stack in a scratch copy and verify 
 .PHONY: sync-templates
 sync-templates: ## Copy dependency versions from the sample apps into generator templates
 	bash tools/scripts/sync-templates.sh
+
+.PHONY: remove-samples
+remove-samples: ## Remove the sample apps and all references to them
+	bash tools/scripts/remove-samples.sh
 
 .PHONY: new-adr
 new-adr: ## Create a new ADR (usage: make new-adr NAME=database-selection)
