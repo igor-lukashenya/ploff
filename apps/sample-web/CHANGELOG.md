@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.2](https://github.com/igor-lukashenya/ploff/compare/sample-web/v0.1.1...sample-web/v0.1.2) (2026-09-26)
+
+
+### Bug Fixes
+
+* **sample-web:** drop deprecated jest-dom types stub ([ef9c422](https://github.com/igor-lukashenya/ploff/commit/ef9c422a36dedb84901a3433e6a1043f082a4d39))
+
 ## [0.1.1](https://github.com/igor-lukashenya/ploff/compare/sample-web/v0.1.0...sample-web/v0.1.1) (2026-09-26)
 
 
