@@ -18,6 +18,8 @@ tools/
 | `new-project.sh` | `make new-app` / `make new-package` | Generate a project from a template and register it |
 | `new-adr.sh` | `make new-adr` | Create a new ADR from the template |
 | `refresh-release-prs.sh` | - (CI) | Merge `main` into open release PRs and resolve `.release-please-manifest.json` conflicts |
+| `test-generators.sh` | `make test-generators` | Generate one project per stack in a scratch copy and build/lint/test it (CI: `--docker` too) |
+| `check-conventional.sh` | `make check-commits` | Validate Conventional Commit messages (PR title, commit range, or commit-msg file) |
 | `sync-templates.sh` | `make sync-templates` | Copy dependency versions from the sample apps into generator templates (`--check` reports drift; CI warns) |
 
 All scripts are Bash (on Windows, use WSL or the devcontainer).
@@ -45,7 +47,7 @@ a `template.yml` (title, destination, variables) plus files rendered with
 3. If the language has no `.moon/tasks/<language>.yml` yet, add one with the standard tasks
 4. If it needs registration beyond what `new-project.sh` does (Release Please, root `.slnx`,
    Dependabot, npm lockfile), extend the script
-5. Test it: `make new-app STACK=<stack> NAME=tmp-test && make run APP=tmp-test TASK=test`
+5. Test it: `make test-generators` (CI runs it when generators or `.moon/` change)
 
 ## Adding a Script
 

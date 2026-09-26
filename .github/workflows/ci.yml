@@ -68,12 +68,13 @@ jobs:
         with:
           access-token: ${{ secrets.GITHUB_TOKEN }}
 
-  # ---- Docs: Build ----
-  docs-changes:
-    name: Detect docs changes
+  # ---- Detect changes outside moon projects ----
+  changes:
+    name: Detect changes
     runs-on: ubuntu-latest
     outputs:
       docs: ${{ steps.filter.outputs.docs }}
+      templates: ${{ steps.filter.outputs.templates }}
     steps:
       - uses: actions/checkout@v7
 
@@ -84,11 +85,19 @@ jobs:
             docs:
               - 'docs/**'
               - 'mkdocs.yml'
+            templates:
+              - 'tools/generators/**'
+              - 'tools/scripts/new-project.sh'
+              - 'tools/scripts/test-generators.sh'
+              - '.moon/**'
+              - '.prototools'
+              - 'global.json'
 
+  # ---- Docs: Build ----
   docs:
     name: docs
-    needs: docs-changes
-    if: needs.docs-changes.outputs.docs == 'true'
+    needs: changes
+    if: needs.changes.outputs.docs == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -103,20 +112,41 @@ jobs:
       - name: Build docs
         run: mkdocs build --strict
 
+  # ---- Generators: create one project per stack and verify it ----
+  templates:
+    name: generator self-test
+    needs: changes
+    if: needs.changes.outputs.templates == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: global.json
+
+      - uses: moonrepo/setup-toolchain@v0
+        with:
+          auto-install: true
+
+      - name: Generate and verify every stack
+        run: bash tools/scripts/test-generators.sh --docker
+
   # ---- CI Gate (the single required status check) ----
   ci-gate:
     name: CI Gate
     runs-on: ubuntu-latest
     if: always()
-    needs: [moon, docs-changes, docs]
+    needs: [moon, changes, docs, templates]
     steps:
       - name: Check results
         run: |
           fail=0
           for result in \
             "moon=${{ needs.moon.result }}" \
-            "docs-changes=${{ needs.docs-changes.result }}" \
-            "docs=${{ needs.docs.result }}"; do
+            "changes=${{ needs.changes.result }}" \
+            "docs=${{ needs.docs.result }}" \
+            "templates=${{ needs.templates.result }}"; do
             echo "$result"
             # skipped is fine (nothing affected); failure/cancelled is not
             if [[ "${result#*=}" =~ ^(failure|cancelled)$ ]]; then

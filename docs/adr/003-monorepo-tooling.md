@@ -183,7 +183,7 @@ Every .NET project uses `<Name>.slnx` + `src/<Name>/` + `tests/<Name>.Tests/`, s
 
 - Mobile generator, once the mobile stack is chosen (React Native/Expo, Flutter or native)
 - TypeScript shared-library generator (for code shared between web and mobile)
-- CI job that generates each stack into a scratch workspace and runs its tasks, to keep
-  templates working
+- ~~CI job that generates each stack into a scratch workspace and runs its tasks~~ - done
+  (`make test-generators`, CI job "generator self-test")
 - ADR for release gating and environment promotion, including how package-only changes
   should trigger releases of dependent apps
