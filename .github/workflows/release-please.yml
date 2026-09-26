@@ -13,6 +13,12 @@
 #
 # Apps are registered in release-please-config.json (done by `make new-app`);
 # no changes to this file are needed when adding apps.
+#
+# Token: set the optional RELEASE_PLEASE_TOKEN secret (GitHub App token or
+# fine-grained PAT with contents + pull-requests write). Pushes made with the
+# default GITHUB_TOKEN don't trigger other workflows, so without it release PRs
+# get no CI run until you trigger one (e.g. close and reopen the PR).
+# See docs/guides/release-process.md.
 
 name: Release Please
 
@@ -34,6 +40,7 @@ jobs:
       - uses: googleapis/release-please-action@v5
         id: release
         with:
+          token: ${{ secrets.RELEASE_PLEASE_TOKEN || github.token }}
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
 
@@ -50,6 +57,30 @@ jobs:
             | map({ app: ltrimstr("apps/"), version: $o[. + "--version"] })')
           echo "Released: $RELEASES"
           echo "releases=$RELEASES" >> "$GITHUB_OUTPUT"
+
+  # After a release, the other open release PRs conflict on the shared
+  # .release-please-manifest.json; merge main into them and resolve it.
+  refresh-release-prs:
+    name: Refresh other release PRs
+    needs: release-please
+    if: needs.release-please.outputs.releases != '[]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.RELEASE_PLEASE_TOKEN || github.token }}
+
+      - name: Merge main into open release PRs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          BRANCHES=$(gh pr list --state open --base main --label "autorelease: pending" \
+            --json headRefName --jq '.[].headRefName | select(startswith("release-please--"))')
+          # shellcheck disable=SC2086 # one argument per branch
+          bash tools/scripts/refresh-release-prs.sh $BRANCHES
 
   deploy:
     name: Deploy ${{ matrix.release.app }} v${{ matrix.release.version }}

@@ -17,6 +17,7 @@ tools/
 | `init-project.sh` | - | Personalize the template for a new solution (name, license) |
 | `new-project.sh` | `make new-app` / `make new-package` | Generate a project from a template and register it |
 | `new-adr.sh` | `make new-adr` | Create a new ADR from the template |
+| `refresh-release-prs.sh` | - (CI) | Merge `main` into open release PRs and resolve `.release-please-manifest.json` conflicts |
 | `sync-templates.sh` | `make sync-templates` | Copy dependency versions from the sample apps into generator templates (`--check` reports drift; CI warns) |
 
 All scripts are Bash (on Windows, use WSL or the devcontainer).

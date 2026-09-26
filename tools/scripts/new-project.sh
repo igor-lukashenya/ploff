@@ -123,10 +123,17 @@ const fs = require('fs');
 const [name, language, pascal] = process.argv.slice(2);
 const key = `apps/${name}`;
 
+// package.json plus both version fields of package-lock.json
+const npmVersionFiles = [
+  { type: 'json', path: 'package.json', jsonpath: '$.version' },
+  { type: 'json', path: 'package-lock.json', jsonpath: '$.version' },
+  { type: 'json', path: 'package-lock.json', jsonpath: "$.packages[''].version" },
+];
+
 const extraFiles = {
   csharp: [{ type: 'xml', path: `src/${pascal}/${pascal}.csproj`, xpath: '//Project/PropertyGroup/Version' }],
-  typescript: [{ type: 'json', path: 'package.json', jsonpath: '$.version' }],
-  javascript: [{ type: 'json', path: 'package.json', jsonpath: '$.version' }],
+  typescript: npmVersionFiles,
+  javascript: npmVersionFiles,
 }[language] ?? [];
 
 const update = (file, fn) => {

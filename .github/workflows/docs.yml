@@ -36,7 +36,15 @@ jobs:
       - name: Install MkDocs Material
         run: pip install -r docs/requirements.txt
 
+      # Provides the Pages URL (including custom domains) for mkdocs.yml site_url
+      - uses: actions/configure-pages@v6
+        id: pages
+
       - name: Build documentation
+        env:
+          SITE_URL: ${{ steps.pages.outputs.base_url }}/
+          REPO_URL: ${{ github.server_url }}/${{ github.repository }}
+          REPO_NAME: ${{ github.repository }}
         run: mkdocs build --strict
 
       - uses: actions/upload-pages-artifact@v5

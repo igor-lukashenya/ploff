@@ -1,10 +1,16 @@
 # Release Process
 
-This document describes how to create and manage releases for this project.
+This document describes how releases are created for the apps in this monorepo.
+
+Every app is versioned and released **independently** by
+[Release Please](https://github.com/googleapis/release-please), driven by
+[Conventional Commits](https://www.conventionalcommits.org/). See
+[ADR-002](../adr/002-git-branching-strategy.md) (branching) and
+[ADR-003](../adr/003-monorepo-tooling.md) (tooling).
 
 ## Versioning
 
-We follow [Semantic Versioning](https://semver.org/) (SemVer):
+We follow [Semantic Versioning](https://semver.org/) (SemVer), per app:
 
 ```
 MAJOR.MINOR.PATCH
@@ -14,92 +20,85 @@ MINOR — New features (backward compatible)
 PATCH — Bug fixes (backward compatible)
 ```
 
-For pre-release versions: `1.0.0-alpha.1`, `1.0.0-beta.2`, `1.0.0-rc.1`
+Below 1.0.0, `feat` bumps the patch version and breaking changes bump the minor version.
 
-## Branching & Releases
+| Commit | Example | Effect on the app's next version |
+| --- | --- | --- |
+| `fix(<app>): …` | `fix(orders): handle empty cart` | Patch |
+| `feat(<app>): …` | `feat(orders): add refunds` | Minor |
+| `feat(<app>)!: …` or `BREAKING CHANGE:` footer | `feat(orders)!: drop v1 API` | Major |
+| `deps(<app>): …` | Dependabot updates | Patch |
+| `docs`, `ci`, `chore`, `test`, `refactor` | | No release |
+
+Release Please attributes a commit to an app by the **files it changes** (`apps/<app>/`), so
+the scope is for readability. Commits that only change `packages/` don't release any app;
+see [Shared packages](#shared-packages).
+
+## How a Release Happens
 
 ```
-main ─────●──────●──────●──────●──── (always deployable)
-           \            │
-            feature/x   tag: v1.2.0
+feat(orders): ...  ──► main ──► Release Please opens/updates "release orders X.Y.Z" PR
+fix(orders): ...   ──► main ──► ... the PR accumulates changes and the changelog
+                                 │
+                   merge the PR ─┘──► tag orders/vX.Y.Z + GitHub Release
+                                      ──► deploy-app.yml deploys orders to production
 ```
 
-- `main` is always in a deployable state
-- Features are developed on feature branches and merged via PR
-- Releases are created by tagging `main`
+1. Merge Conventional Commit PRs to `main` as usual.
+2. Release Please keeps one **release PR per app** up to date. It bumps the version
+   (`.csproj` / `package.json` + `package-lock.json`), updates `apps/<app>/CHANGELOG.md` and
+   `.release-please-manifest.json`.
+3. When the app is ready to ship, review and **merge its release PR**. This creates the
+   `<app>/vX.Y.Z` tag and GitHub Release, and deploys that version to production.
 
-## Release Checklist
+Apps release on their own schedule: merge each app's release PR whenever that app is ready.
 
-### 1. Prepare
+### Conflicting release PRs
 
-- [ ] All features for the release are merged to `main`
-- [ ] All CI checks pass on `main`
-- [ ] Review the changelog for completeness
+All release PRs edit `.release-please-manifest.json`. After one is merged, the Release Please
+workflow merges `main` into the other open release PRs and resolves the manifest
+automatically (`tools/scripts/refresh-release-prs.sh`). If a release PR conflicts in any
+other file, the workflow shows a warning and you update that PR by hand.
 
-### 2. Update Changelog
+## Setup
 
-Move items from `[Unreleased]` to a new version section in `docs/release-notes/CHANGELOG.md`:
+These are one-time settings for each repository created from the template:
 
-```markdown
-## [1.2.0] - 2026-04-18
+1. **Settings → Actions → General → Workflow permissions**: enable
+   **Allow GitHub Actions to create and approve pull requests** (required for release PRs).
+2. **`RELEASE_PLEASE_TOKEN` secret** (recommended): Release PRs and their updates are pushed
+   by the workflow. Pushes made with the default `GITHUB_TOKEN` don't trigger other workflows,
+   so without this secret release PRs get **no CI run** until you trigger one (close and
+   reopen the PR). Create either:
+   - a **GitHub App** installed on the repository, with *Contents* and *Pull requests*
+     read/write, and store an installation token as `RELEASE_PLEASE_TOKEN`; or
+   - a **fine-grained personal access token** limited to this repository, with *Contents* and
+     *Pull requests* read/write, stored as `RELEASE_PLEASE_TOKEN` (Settings → Secrets and
+     variables → Actions).
 
-### Added
-- New user authentication flow (#42)
+## Shared Packages
 
-### Fixed
-- Dashboard loading timeout (#38)
-```
-
-### 3. Tag the Release
-
-```bash
-# Create an annotated tag
-git tag -a v1.2.0 -m "Release v1.2.0"
-
-# Push the tag
-git push origin v1.2.0
-```
-
-### 4. Create GitHub Release (if using GitHub)
-
-1. Go to **Releases** → **Draft a new release**
-2. Select the tag `v1.2.0`
-3. Copy the changelog section as the release description
-4. Publish the release
-
-### 5. Deploy
-
-The deployment pipeline can be triggered automatically by the tag, or manually:
-
-```bash
-# GitHub Actions: run the "Deploy App" workflow (workflow_dispatch)
-# with the app name, version and target environment
-```
-
-### 6. Verify
-
-- [ ] Deployment completed successfully
-- [ ] Health checks pass in the target environment
-- [ ] Smoke test critical user flows
+Packages in `packages/` are not released on their own. A package change is rebuilt, retested
+and deployed to **dev** for every app that depends on it, but Release Please only looks at
+each app's own folder. To ship a package change to production in an app, land a commit
+scoped to that app, for example `fix(orders): pick up shared-kernel fix`.
 
 ## Hotfix Process
 
 For urgent production fixes:
 
-1. Create a `hotfix/<name>` branch from the latest release tag
-2. Apply the fix
-3. Open a PR to `main`
-4. After merge, tag a new patch release (e.g., `v1.2.1`)
-5. Deploy immediately
+1. Create a `hotfix/<app>/<version>` branch from the app's release tag (e.g. `orders/v1.2.0`)
+2. Apply the fix with a `fix(<app>): …` commit and open a PR to `main`
+3. Merge the PR, then merge the app's release PR that Release Please opens (`1.2.1`)
+4. Verify the production deployment
 
-## Per-App Versioning (Optional)
+## Manual Deployment
 
-In a monorepo, you may version apps independently:
+To deploy a specific app version to any environment, run the **Deploy App** workflow
+(Actions → Deploy App → Run workflow) with the app name, version and environment.
 
-```
-v1.2.0              — Whole-project version (simple)
-api/v1.2.0          — Per-app version tags (more granular)
-web/v3.1.0
-```
+## Verify
 
-Choose the approach that fits your team. Whole-project versioning is simpler; per-app versioning gives more granular control.
+- [ ] Deployment completed successfully
+- [ ] Health checks pass in the target environment
+- [ ] Smoke test critical user flows
