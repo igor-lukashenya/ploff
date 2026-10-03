@@ -38,7 +38,7 @@ See the root [README.md](../index.md) for the full structure.
 
 ```bash
 # One-time: install proto (toolchain manager), then restart your shell
-curl -fsSL https://moonrepo.dev/install/proto.sh | bash
+make install-proto
 
 # Install moon + Node.js (pinned in .prototools), sync the workspace and git hooks
 make setup

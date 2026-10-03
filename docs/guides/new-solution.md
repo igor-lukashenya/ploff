@@ -56,7 +56,7 @@ Once per machine:
 2. Install [proto](https://moonrepo.dev/proto) and **open a new terminal** afterwards:
 
     ```bash
-    curl -fsSL https://moonrepo.dev/install/proto.sh | bash
+    make install-proto
     ```
 
 Then, in the repository:
