@@ -134,6 +134,12 @@ SOLUTION_NAME="${SOLUTION_NAME:-Ploff}"
 
 export PLOFF_DISPLAY_NAME="$DISPLAY_NAME" PLOFF_SLUG="$SLUG" PLOFF_SOLUTION="$SOLUTION_NAME"
 
+# Lines about the template itself (e.g. what "Ploff" stands for) make no sense
+# under the new name; drop them (and the blank line after) before renaming
+while IFS= read -r file; do
+  [ -f "$file" ] && perl -0pi -e 's/^[^\n]*<!-- template-only -->\n\n?//mg' "$file"
+done < <(git grep -lI 'template-only -->' -- ':!tools/scripts/init-project.sh')
+
 while IFS= read -r file; do
   [ -f "$file" ] || continue
   # -I skips binary files

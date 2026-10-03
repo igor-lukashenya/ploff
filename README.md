@@ -1,5 +1,7 @@
 # Ploff
 
+**Ploff** stands for **P**roject **L**ift **Off**.<!-- template-only -->
+
 A monorepo boilerplate - your launchpad for new projects. Contains everything you need:
 applications, shared packages, infrastructure code, and documentation.
 
