@@ -38,7 +38,7 @@ git clone <repo-url>
 cd ploff
 
 # One-time: install proto (toolchain manager), then restart your shell
-curl -fsSL https://moonrepo.dev/install/proto.sh | bash
+make install-proto
 
 # Install pinned toolchains and verify everything
 make setup

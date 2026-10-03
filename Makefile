@@ -8,6 +8,7 @@
 #
 # Usage:
 #   make help                       Show all available commands
+#   make install-proto              Install proto, the toolchain manager (once per machine)
 #   make setup                      Install toolchains and dependencies
 #   make check                      Lint + typecheck + test everything
 #   make run APP=sample-api TASK=dev   Run any task of one project
@@ -52,6 +53,15 @@ help: ## Show this help message
 
 # ---- Setup ----
 
+.PHONY: install-proto
+install-proto: ## Install proto, the toolchain manager (once per machine)
+	@if command -v proto >/dev/null 2>&1; then \
+		echo "$(GREEN)proto is already installed ($$(proto --version)).$(RESET) Run 'make setup'."; \
+	else \
+		curl -fsSL https://moonrepo.dev/install/proto.sh | bash && \
+		echo "$(GREEN)proto installed.$(RESET) Open a NEW terminal (or run 'exec $$SHELL'), then run 'make setup'."; \
+	fi
+
 .PHONY: setup
 setup: ## Install pinned toolchains (.prototools) and project dependencies
 	@if ! command -v proto >/dev/null 2>&1; then \
@@ -61,7 +71,7 @@ setup: ## Install pinned toolchains (.prototools) and project dependencies
 			echo '  export PATH="$$HOME/.proto/shims:$$HOME/.proto/bin:$$PATH"'; \
 		else \
 			echo "$(RED)proto is not installed.$(RESET) Install it (answer 'yes' to updating your shell profile):"; \
-			echo "  curl -fsSL https://moonrepo.dev/install/proto.sh | bash"; \
+			echo "  make install-proto"; \
 			echo "Then open a NEW terminal and re-run 'make setup'. See docs/guides/getting-started.md"; \
 		fi; \
 		exit 1; \
