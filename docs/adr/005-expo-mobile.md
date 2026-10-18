@@ -49,11 +49,18 @@ Use **Expo** (managed workflow) for mobile development:
   otherwise jest hangs for ~5 minutes after the test suite completes. The generated test file
   `__tests__/home-screen.test.tsx` sets this on its QueryClient with an explanatory comment;
   new tests must do the same (see template: `tools/generators/expo-mobile/__tests__/home-screen.test.tsx.tera`)
-- **SDK drift**: Expo SDK and React Native versions update frequently; the generator template's
-  `package-lock.json` must be regenerated regularly and Dependabot monitors updates
+- **SDK drift & lockfile management**: The template's `package-lock.json` is refreshed manually
+  (regenerate with `npx expo install` in a scratch app, then replace the name with the Tera
+  name expression as in `tools/generators/react-web/package-lock.json.tera`) because Dependabot
+  only watches `apps/*`, not `tools/generators/`, and `sync-templates.sh` only covers `react-web`
+  until a reference Expo app exists. Generated apps themselves are covered by the Dependabot
+  entry registered by `new-project.sh`
 - **Limited customization**: Expo's managed workflow does not support some native modules; for
   apps needing native code (camera with custom processing, etc.), a bare workflow can be
   considered later
+- **Release Please limitations**: Release Please bumps `package.json` and `package-lock.json`
+  only; `expo.version` in `app.json` is not bumped automatically and must be kept in sync
+  manually until an EAS/release workflow is added
 
 ### Neutral
 
