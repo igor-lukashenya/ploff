@@ -4,7 +4,7 @@
 
 **Status**: Accepted
 
-**Deciders**: Architecture team
+**Deciders**: Igor Lukashenya
 
 ## Context
 
@@ -45,9 +45,10 @@ Use **Expo** (managed workflow) for mobile development:
 - **No direct store deployment yet**: EAS Build/Submit for app stores is not integrated;
   developers must configure and upload manually or use EAS CLI locally (to be addressed in
   a future ADR)
-- **Test suite gotcha**: TanStack Query tests must set `gcTime: 0` in Jest config, otherwise
-  jest hangs for ~5 minutes after the test suite completes. This is a known issue and will be
-  documented in generated `jest.config.js`
+- **Test suite gotcha**: TanStack Query tests must set `gcTime: 0` when creating a QueryClient,
+  otherwise jest hangs for ~5 minutes after the test suite completes. The generated test file
+  `__tests__/home-screen.test.tsx` sets this on its QueryClient with an explanatory comment;
+  new tests must do the same (see template: `tools/generators/expo-mobile/__tests__/home-screen.test.tsx.tera`)
 - **SDK drift**: Expo SDK and React Native versions update frequently; the generator template's
   `package-lock.json` must be regenerated regularly and Dependabot monitors updates
 - **Limited customization**: Expo's managed workflow does not support some native modules; for
