@@ -91,6 +91,7 @@ List the available stacks and generate what the requirements need:
 make stacks
 make new-app STACK=dotnet-service NAME=orders          # API / microservice
 make new-app STACK=react-web NAME=portal               # web frontend
+make new-app STACK=expo-mobile NAME=companion          # mobile app
 make new-app STACK=dotnet-console NAME=importer        # tool / job
 make new-package STACK=dotnet-library NAME=shared-kernel
 make check
