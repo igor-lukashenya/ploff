@@ -10,7 +10,7 @@ function mockFetchOk() {
   } as Response);
 }
 
-function renderScreen() {
+async function renderScreen() {
   // gcTime: 0 prevents TanStack Query's default 5min GC timer from keeping the event loop alive during jest shutdown
   const client = new QueryClient({ defaultOptions: { queries: { retry: false, gcTime: 0 } } });
   return render(
@@ -27,19 +27,19 @@ describe('HomeScreen', () => {
 
   it('renders the welcome heading', async () => {
     mockFetchOk();
-    renderScreen();
+    await renderScreen();
     expect(screen.getByText('Welcome to {{ name }}')).toBeTruthy();
   });
 
   it('shows the API health status', async () => {
     mockFetchOk();
-    renderScreen();
+    await renderScreen();
     expect(await screen.findByText('API: Healthy')).toBeTruthy();
   });
 
   it('shows an error when the API is unreachable', async () => {
     jest.spyOn(globalThis, 'fetch').mockRejectedValue(new Error('network down'));
-    renderScreen();
+    await renderScreen();
     expect(await screen.findByText('API: unavailable')).toBeTruthy();
   });
 });
