@@ -1,0 +1,14 @@
+{
+  "expo": {
+    "name": "{{ name }}",
+    "slug": "{{ name }}",
+    "version": "0.1.0",
+    "scheme": "{{ name }}",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "ios": { "bundleIdentifier": "{% if bundle_id == "com.example.app" %}com.example.{{ name | replace(from="-", to="") }}{% else %}{{ bundle_id }}{% endif %}" },
+    "android": { "package": "{% if bundle_id == "com.example.app" %}com.example.{{ name | replace(from="-", to="") }}{% else %}{{ bundle_id }}{% endif %}" },
+    "plugins": ["expo-router"],
+    "experiments": { "typedRoutes": true }
+  }
+}

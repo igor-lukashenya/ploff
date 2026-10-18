@@ -1,0 +1,9 @@
+import { StyleSheet, Text } from 'react-native';
+
+export function StatusText({ children }: { children: string }) {
+  return <Text style={styles.text}>{children}</Text>;
+}
+
+const styles = StyleSheet.create({
+  text: { fontSize: 16, color: '#555' },
+});

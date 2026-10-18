@@ -1,0 +1,28 @@
+$schema: 'https://moonrepo.dev/schemas/moon.json'
+
+language: 'typescript'
+layer: 'application'
+stack: 'frontend'
+tags: ['mobile', 'expo']
+
+project:
+  title: '{{ name }}'
+  description: 'Expo (React Native) mobile application'
+
+# lint/typecheck/test/build/publish/format/dev are inherited from
+# .moon/tasks/node.yml. Only the input group differs: Expo has no src/ or index.html.
+fileGroups:
+  sources:
+    - 'app/**/*'
+    - 'components/**/*'
+    - 'hooks/**/*'
+    - 'services/**/*'
+    - 'types/**/*'
+    - 'assets/**/*'
+    - '__tests__/**/*'
+    - 'app.json'
+    - 'package.json'
+    - 'package-lock.json'
+    - 'tsconfig*.json'
+    - '*.config.*'
+    - '/.editorconfig'

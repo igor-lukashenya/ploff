@@ -1,0 +1,11 @@
+import { useQuery } from '@tanstack/react-query';
+
+import { getJson } from '@/services/api';
+import type { Health } from '@/types/health';
+
+export function useHealth() {
+  return useQuery({
+    queryKey: ['health'],
+    queryFn: () => getJson<Health>('/health'),
+  });
+}

@@ -1,0 +1,30 @@
+# {{ name }}
+
+Expo (React Native) + TypeScript mobile app with Expo Router, TanStack Query and Jest.
+
+## Commands
+
+- `make run APP={{ name }} TASK=dev` — start the Expo dev server (or `npm run dev` inside the app)
+- `make run APP={{ name }} TASK=test` — run the Jest test suite
+- `make run APP={{ name }} TASK=lint` — run ESLint
+- `make run APP={{ name }} TASK=typecheck` — run `tsc --noEmit`
+- `make run APP={{ name }} TASK=build` — export the app bundle to `dist/`
+
+## Structure
+
+- `app/` — Expo Router routes (file-based routing)
+- `components/` — shared UI components
+- `hooks/` — React hooks (e.g. data fetching)
+- `services/` — API clients and other external integrations
+- `types/` — shared TypeScript types
+- `__tests__/` — Jest tests (kept out of `app/` so Expo Router does not treat them as routes)
+
+## Configuration
+
+- `EXPO_PUBLIC_API_URL` — base URL for the backend API, defaults to `http://localhost:8080`
+- Bundle/package identifier — set via `ios.bundleIdentifier` / `android.package` in `app.json`
+
+## Notes
+
+This app is not deployed by CI, and store builds via EAS are not set up yet.
+See `docs/adr/005-expo-mobile.md` for the architectural decision.
