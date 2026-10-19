@@ -1,0 +1,23 @@
+# moon template - https://moonrepo.dev/docs/guides/codegen
+# Use via: make new-app STACK=astro-landing NAME=<name>
+title: 'Astro landing page'
+description: 'Astro 5 static site with i18n (en/es), SEO, and per-language GEO (llms.txt)'
+destination: 'apps/[name]'
+
+variables:
+  name:
+    type: 'string'
+    required: true
+    prompt: 'App name (kebab-case)?'
+  site_name:
+    type: 'string'
+    default: 'My Site'
+    prompt: 'Human-readable site name/title?'
+  site_url:
+    type: 'string'
+    default: 'https://example.com'
+    prompt: 'Public site URL (https://...)?'
+  port:
+    type: 'number'
+    default: 3000
+    prompt: 'Host port for local Docker Compose?'

@@ -1,0 +1,32 @@
+import type { Translation } from './types';
+
+export const en: Translation = {
+  meta: {
+    title: 'Landing page',
+    description: 'A fast, multilingual, SEO- and AI-ready landing page.',
+  },
+  nav: {
+    features: 'Features',
+    github: 'GitHub',
+  },
+  hero: {
+    badge: 'Built with Astro',
+    title: 'Launch a landing page that ranks and translates',
+    subtitle: 'A static Astro site with translation, search-engine optimization, and AI-ready content built in.',
+    cta: 'Get started',
+    secondary: 'See features',
+  },
+  features: {
+    title: 'Everything you need',
+    subtitle: 'Ship a fast, discoverable site in minutes.',
+    items: [
+      { title: 'Multilingual', description: 'Serve English and Spanish out of the box; add a language in one step.' },
+      { title: 'SEO-ready', description: 'Canonical URLs, hreflang, Open Graph, sitemap and robots.txt.' },
+      { title: 'AI-friendly', description: 'llms.txt and clean semantic HTML so AI tools can cite you.' },
+    ],
+  },
+  footer: {
+    tagline: 'Built with Astro and Tailwind.',
+    rights: 'All rights reserved.',
+  },
+};
