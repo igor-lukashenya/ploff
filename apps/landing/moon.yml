@@ -7,7 +7,7 @@ tags: ['deployable', 'astro']
 
 project:
   title: 'landing'
-  description: 'Astro 5 multilingual marketing landing page'
+  description: 'Astro 7 multilingual marketing landing page'
 
 # lint/typecheck/test/build/publish/format/dev are inherited from
 # .moon/tasks/node.yml. Astro's src/ + public/ match the default sources group.

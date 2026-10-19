@@ -5,7 +5,7 @@ import tailwindcss from '@tailwindcss/vite';
 import { fileURLToPath } from 'node:url';
 
 // SITE_URL overrides the generator's site_url at build/deploy time.
-const site = process.env.SITE_URL ?? 'https://example.com';
+const site = (process.env.SITE_URL ?? 'https://example.com').replace(/\/+$/, '');
 
 // https://astro.build/config
 export default defineConfig({
