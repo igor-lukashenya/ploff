@@ -17,6 +17,7 @@ onboarding and future discussions.
 | [003](003-monorepo-tooling.md) | Monorepo Tooling: moon, Release Please and Generators | Accepted | 2026-09-26 |
 | [004](004-security-scanning.md) | Security Scanning and CI Supply-Chain Hardening | Accepted | 2026-09-27 |
 | [005](005-expo-mobile.md) | Expo for React Native Mobile Development | Accepted | 2026-10-18 |
+| [006](006-astro-landing.md) | Astro for Marketing Landing Pages | Accepted | 2026-10-19 |
 
 ## Creating a New ADR
 

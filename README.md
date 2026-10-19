@@ -69,6 +69,7 @@ apps/
 ├── orders/        # Microservice      (make new-app STACK=dotnet-service NAME=orders)
 ├── portal/        # Web frontend      (make new-app STACK=react-web NAME=portal)
 ├── companion/     # Mobile app        (make new-app STACK=expo-mobile NAME=companion)
+├── landing/       # Marketing site    (make new-app STACK=astro-landing NAME=landing)
 └── importer/      # CLI tool / job    (make new-app STACK=dotnet-console NAME=importer)
 ```
 

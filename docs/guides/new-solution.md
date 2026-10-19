@@ -92,6 +92,7 @@ make stacks
 make new-app STACK=dotnet-service NAME=orders          # API / microservice
 make new-app STACK=react-web NAME=portal               # web frontend
 make new-app STACK=expo-mobile NAME=companion          # mobile app
+make new-app STACK=astro-landing NAME=landing          # marketing landing page (i18n + SEO + GEO)
 make new-app STACK=dotnet-console NAME=importer        # tool / job
 make new-package STACK=dotnet-library NAME=shared-kernel
 make check

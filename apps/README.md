@@ -26,11 +26,12 @@ make stacks                                      # List available stacks
 make new-app STACK=dotnet-service NAME=orders    # .NET API / microservice
 make new-app STACK=react-web NAME=portal         # React web app
 make new-app STACK=expo-mobile NAME=companion    # Expo / React Native mobile app
+make new-app STACK=astro-landing NAME=landing    # Astro marketing landing page (i18n + SEO + GEO)
 make new-app STACK=dotnet-console NAME=importer  # CLI tool / job
 ```
 
 The generator creates a working app (source, tests, `README.md`, `moon.yml`) and, for
-services and web apps, `infra/docker/Dockerfile.<name>` plus a compose fragment
+services, web apps, and landing pages, `infra/docker/Dockerfile.<name>` plus a compose fragment
 `infra/docker/compose.<name>.yml`. Mobile apps (`expo-mobile`) have no Dockerfile or compose
 fragment and are not deployed. It then registers the app in:
 

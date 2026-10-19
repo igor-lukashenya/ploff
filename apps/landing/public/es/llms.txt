@@ -1,0 +1,7 @@
+# Ploff
+
+> Ploff (Project Lift Off) es una plantilla de monorepo — aplicaciones, paquetes compartidos, infraestructura, documentación y generadores que crean un servicio, web, móvil o landing en un comando.
+
+## Sitio
+
+- [Ploff](https://example.com/es/): La landing de Ploff — qué es y cómo empezar.

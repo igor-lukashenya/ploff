@@ -1,0 +1,13 @@
+# Ploff
+
+Ploff (Project Lift Off) es una plantilla de monorepo — aplicaciones, paquetes compartidos, infraestructura, documentación y generadores que crean un servicio, web, móvil o landing en un comando.
+
+## Lanza nuevos proyectos desde una única plataforma
+
+Ploff es una plantilla de monorepo con todo lo que necesitas: aplicaciones, paquetes compartidos, infraestructura, CI y generadores que crean un servicio, web, móvil o landing en un comando.
+
+## Características
+
+- **Scaffolding en un comando**: `make new-app STACK=<stack> NAME=<name>` genera un proyecto .NET, React, Expo o Astro con pruebas.
+- **Herramientas de monorepo**: moon orquesta build, test, lint y CI con ejecuciones solo de lo afectado.
+- **Landings multilingües**: landing pages en Astro con i18n, SEO y contenido listo para IA (GEO).

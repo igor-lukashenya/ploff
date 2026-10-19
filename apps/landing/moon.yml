@@ -1,0 +1,13 @@
+$schema: 'https://moonrepo.dev/schemas/moon.json'
+
+language: 'typescript'
+layer: 'application'
+stack: 'frontend'
+tags: ['deployable', 'astro']
+
+project:
+  title: 'landing'
+  description: 'Astro 7 multilingual marketing landing page'
+
+# lint/typecheck/test/build/publish/format/dev are inherited from
+# .moon/tasks/node.yml. Astro's src/ + public/ match the default sources group.

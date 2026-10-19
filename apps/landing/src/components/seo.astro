@@ -1,0 +1,43 @@
+---
+import { site } from '@/lib/site';
+import { absoluteUrl, hreflangLinks, llmsFullPath, llmsTxtPath, localizePath } from '@/lib/seo';
+
+interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
+const locale = Astro.currentLocale ?? site.defaultLocale;
+const pathname = Astro.url.pathname;
+const canonical = absoluteUrl(pathname);
+const alternates = hreflangLinks(pathname, locale);
+const xDefault = absoluteUrl(localizePath(pathname, locale, site.defaultLocale));
+const llms = llmsTxtPath(locale);
+const llmsFull = llmsFullPath(locale);
+const pageTitle = `${site.name} · ${title}`;
+const jsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: site.name,
+  url: site.url,
+});
+---
+
+<title>{pageTitle}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+{alternates.map((a) => <link rel="alternate" hreflang={a.lang} href={a.href} />)}
+<link rel="alternate" hreflang="x-default" href={xDefault} />
+<link rel="sitemap" href="/sitemap-index.xml" />
+<meta property="og:title" content={pageTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content={site.name} />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={pageTitle} />
+<meta name="twitter:description" content={description} />
+<link rel="alternate" type="text/markdown" href={llmsFull} />
+<link rel="describedby" href={llms} />
+<script type="application/ld+json" set:html={jsonLd} />

@@ -14,7 +14,7 @@ points (`CLAUDE.md`, `.github/copilot-instructions.md`) build on this file.
 | sample-web | `apps/sample-web` | React 19 + Vite 8 + TypeScript |
 | infra-docker | `infra/docker` | Docker Compose |
 | infra-terraform | `infra/terraform` | Terraform |
-| generators | `tools/generators` | moon templates: dotnet-service, dotnet-console, dotnet-library, react-web, expo-mobile |
+| generators | `tools/generators` | moon templates: dotnet-service, dotnet-console, dotnet-library, react-web, expo-mobile, astro-landing |
 
 Run `make projects` for the current list of apps and packages.
 
@@ -23,6 +23,7 @@ Run `make projects` for the current list of apps and packages.
 - Backend pattern: Minimal API (.NET 10) - load skill `service-layer-dotnet` when adding services
 - Frontend pattern: React 19 (feature-based structure) - load skill `react-ui`
 - Mobile pattern: Expo (React Native) with Expo Router - see `docs/adr/005-expo-mobile.md`
+- Landing page pattern: Astro (static) with i18n, SEO and per-language GEO - see `docs/adr/006-astro-landing.md`; when adding a locale, also add its `llms.txt` + `llms-full.txt`
 - Testing: xUnit + integration tests (.NET), Vitest + Testing Library (React), Jest (React Native) - load skill `dotnet-testing`
 - No database yet - add when needed
 

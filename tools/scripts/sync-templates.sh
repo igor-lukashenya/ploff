@@ -72,6 +72,26 @@ JS
   done < <(find "$OUT/react-web" -name '*.raw' -type f)
 fi
 
+# ─── npm manifest + lockfile from the landing app (astro-landing) ────────────
+
+# Dependabot keeps apps/landing up to date; copy its dependency versions into the
+# astro-landing template (name and version reset for new apps). Only the manifest
+# and lockfile are synced — the template's source files are the source of truth
+# (the landing page's copy is Ploff-specific).
+if [ -f apps/landing/package.json ] && [ -d "$OUT/astro-landing" ]; then
+  for file in package.json package-lock.json; do
+    node - "apps/landing/$file" "$OUT/astro-landing/$file.tera" <<'JS'
+const fs = require('fs');
+const [src, dest] = process.argv.slice(2);
+const json = JSON.parse(fs.readFileSync(src, 'utf8'));
+const reset = (entry) => Object.assign(entry, { name: '{{ name }}', version: '0.1.0' });
+reset(json);
+if (json.packages?.['']) reset(json.packages['']);
+fs.writeFileSync(dest, JSON.stringify(json, null, 2) + '\n');
+JS
+  done
+fi
+
 # ─── Report / apply ──────────────────────────────────────────────────────────
 # (diff -rq quotes paths containing spaces, e.g. "[name | pascal_case]"; quotes are stripped)
 

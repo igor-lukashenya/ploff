@@ -1,0 +1,24 @@
+---
+force: false
+---
+---
+import { useTranslations } from '@/i18n';
+import { site } from '@/lib/site';
+
+const locale = Astro.currentLocale ?? site.defaultLocale;
+const t = useTranslations(locale);
+---
+
+<section class="mx-auto max-w-5xl px-6 py-20 text-center">
+  <span class="inline-block rounded-full bg-slate-100 px-3 py-1 text-sm text-slate-600">{t.hero.badge}</span>
+  <h1 class="mt-6 text-4xl font-bold tracking-tight sm:text-5xl">{t.hero.title}</h1>
+  <p class="mx-auto mt-4 max-w-2xl text-lg text-slate-600">{t.hero.subtitle}</p>
+  <div class="mt-8 flex items-center justify-center gap-4">
+    <a href={site.links.docs} class="rounded-lg bg-slate-900 px-5 py-2.5 font-medium text-white hover:bg-slate-700">
+      {t.hero.cta}
+    </a>
+    <a href="#features" class="rounded-lg border border-slate-300 px-5 py-2.5 font-medium text-slate-700 hover:bg-slate-50">
+      {t.hero.secondary}
+    </a>
+  </div>
+</section>
