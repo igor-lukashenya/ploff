@@ -24,8 +24,8 @@ per-visitor geo-routing.
   in `astro.config.mjs`.
 - **SEO**: a `<Seo>` component renders `<title>`, meta description, canonical URL, `hreflang`
   alternates, Open Graph + Twitter cards, and JSON-LD (`Organization`/`WebSite`).
-  `@astrojs/sitemap` emits `sitemap.xml` (with i18n alternates); `@astrojs/robots-txt` emits
-  `robots.txt` (referencing the sitemap and allowing AI crawlers).
+  `@astrojs/sitemap` emits `sitemap-index.xml` + `sitemap-0.xml` (with i18n alternates);
+  `src/pages/robots.txt.ts` emits `robots.txt` (referencing the sitemap and allowing AI crawlers).
 - **GEO** (per-language): one `llms.txt` (curated map: H1 + blockquote summary + `##` sections
   of `<url>: description` links) and one `llms-full.txt` (full markdown copy) **for every
   supported locale**, at the locale's own path — `/llms.txt` + `/llms-full.txt` (default `en`)
@@ -38,7 +38,7 @@ per-visitor geo-routing.
 
 ## Generator `tools/generators/astro-landing`
 
-- **Stack**: Astro (current stable, 5.x) with `output: 'static'`; TypeScript; Tailwind CSS v4
+- **Stack**: Astro 7 with `output: 'static'`; TypeScript; Tailwind CSS v4
   via `@tailwindcss/vite` (the `@astrojs/tailwind` integration is deprecated).
 - **Tasks**: inherits `.moon/tasks/node.yml` (lint/typecheck/test/build/publish/format/dev).
   Scripts: `dev` = `astro dev`, `build` = `astro build`, `type-check` = `astro check`

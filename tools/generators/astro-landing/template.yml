@@ -1,7 +1,7 @@
 # moon template - https://moonrepo.dev/docs/guides/codegen
 # Use via: make new-app STACK=astro-landing NAME=<name>
 title: 'Astro landing page'
-description: 'Astro 5 static site with i18n (en/es), SEO, and per-language GEO (llms.txt)'
+description: 'Astro 7 static site with i18n (en/es), SEO, and per-language GEO (llms.txt)'
 destination: 'apps/[name]'
 
 variables:
