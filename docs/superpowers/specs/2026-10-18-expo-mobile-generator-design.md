@@ -25,10 +25,12 @@ Out: EAS Build/Submit, store deployment, a sample app, Docker/compose output.
 - `moon.yml`: `language: typescript`, `layer: application`, `stack: frontend`,
   tags `['mobile', 'expo']`. No `deployable` tag.
 - Inherits lint, typecheck, test, format from `.moon/tasks/node.yml`.
-- Overrides: `build` runs `expo export` (bundling sanity check, output `dist/`);
-  `publish` is a no-op; `dev` runs `expo start`.
+- Overrides: `build` runs the `build` script from `package.json` (`expo export --platform android --output-dir dist` — bundling sanity check);
+  `publish` stays the inherited task (depends on `build`); the app is not `deployable`, so deploys never run it; `dev` runs `expo start`.
 - Shared `sources` file group must cover `app/**/*` and `app.json` so mobile
   changes invalidate caches and trigger affected detection.
+- `bundle_id` defaults to a value derived from `name` in `app.json`:
+  `com.example.<name without hyphens>` if the default is not overridden.
 
 ## Scripts
 

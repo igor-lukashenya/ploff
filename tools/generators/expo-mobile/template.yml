@@ -1,0 +1,15 @@
+# moon template - https://moonrepo.dev/docs/guides/codegen
+# Use via: make new-app STACK=expo-mobile NAME=<name>
+title: 'Expo mobile app'
+description: 'React Native (Expo SDK) + TypeScript app with Expo Router, TanStack Query and Jest'
+destination: 'apps/[name]'
+
+variables:
+  name:
+    type: 'string'
+    required: true
+    prompt: 'App name (kebab-case)?'
+  bundle_id:
+    type: 'string'
+    default: 'com.example.app'
+    prompt: 'iOS bundle identifier / Android package?'

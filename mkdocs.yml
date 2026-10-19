@@ -75,6 +75,7 @@ nav:
       - "ADR-002: Git Branching Strategy": adr/002-git-branching-strategy.md
       - "ADR-003: Monorepo Tooling": adr/003-monorepo-tooling.md
       - "ADR-004: Security Scanning": adr/004-security-scanning.md
+      - "ADR-005: Expo for React Native Mobile": adr/005-expo-mobile.md
       - "ADR Template": adr/000-template.md
   - Investigations:
       - Git Flow Strategy: investigations/git-flow-strategy.md

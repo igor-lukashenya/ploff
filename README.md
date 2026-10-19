@@ -68,6 +68,7 @@ release cycle: APIs and microservices, web frontends, mobile apps, tools and job
 apps/
 ├── orders/        # Microservice      (make new-app STACK=dotnet-service NAME=orders)
 ├── portal/        # Web frontend      (make new-app STACK=react-web NAME=portal)
+├── companion/     # Mobile app        (make new-app STACK=expo-mobile NAME=companion)
 └── importer/      # CLI tool / job    (make new-app STACK=dotnet-console NAME=importer)
 ```
 

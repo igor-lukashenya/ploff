@@ -95,6 +95,7 @@ Project types are **moon templates** in `tools/generators/<stack>/`, invoked thr
 | `dotnet-console` | app (tool) | Console tool with testable entry point, tests |
 | `dotnet-library` | package | Shared class library, tests |
 | `react-web` | app | React 19 + Vite SPA, tests, nginx Dockerfile, compose fragment |
+| `expo-mobile` | app | React Native (Expo SDK 58) with Expo Router, TanStack Query, Jest; no Dockerfile/compose |
 
 Templates only **create** new files. The wrapper script then registers the project in shared
 files, with targeted edits: Release Please config and manifest, root `.slnx`, Dependabot, and

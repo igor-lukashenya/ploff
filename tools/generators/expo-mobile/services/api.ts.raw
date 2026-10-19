@@ -1,0 +1,9 @@
+const baseUrl = process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:8080';
+
+export async function getJson<T>(path: string): Promise<T> {
+  const response = await fetch(`${baseUrl}${path}`);
+  if (!response.ok) {
+    throw new Error(`Request failed: ${response.status}`);
+  }
+  return (await response.json()) as T;
+}
