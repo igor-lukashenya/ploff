@@ -104,6 +104,22 @@ updates:
       - dependency-name: "@types/node"
         update-types: ["version-update:semver-major"]
 
+  - package-ecosystem: "npm"
+    directory: "/apps/landing"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "deps(landing)"
+    labels:
+      - "dependencies"
+    groups:
+      npm-minor-patch:
+        update-types: ["minor", "patch"]
+    ignore:
+      # Must match the Node.js runtime in .prototools - see policy at the top
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
+
   # new-project.sh inserts entries for new apps/packages above this line
 
   # Templates for other ecosystems:

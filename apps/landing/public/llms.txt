@@ -1,0 +1,7 @@
+# Ploff
+
+> Ploff (Project Lift Off) is a monorepo boilerplate — apps, shared packages, infrastructure, docs, and generators that scaffold a new service, web app, mobile app, or landing page in one command.
+
+## Site
+
+- [Ploff](https://example.com/): The Ploff landing page — what it is and how to get started.

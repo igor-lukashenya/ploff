@@ -1,0 +1,8 @@
+# landing - loaded automatically by `make up` (see ../../Makefile)
+services:
+  landing:
+    build:
+      context: ../../
+      dockerfile: infra/docker/Dockerfile.landing
+    ports:
+      - "3001:8080"
