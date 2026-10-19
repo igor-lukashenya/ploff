@@ -1,0 +1,13 @@
+# {{ site_name }}
+
+{{ site_name }} is a fast, multilingual landing page built with Astro, with search-engine optimization and AI-ready content built in.
+
+## Launch a landing page that ranks and translates
+
+A static Astro site with translation, search-engine optimization, and AI-ready content built in.
+
+## Features
+
+- **Multilingual**: Serve English and Spanish out of the box; add a language in one step.
+- **SEO-ready**: Canonical URLs, hreflang, Open Graph, sitemap and robots.txt.
+- **AI-friendly**: llms.txt and clean semantic HTML so AI tools can cite you.

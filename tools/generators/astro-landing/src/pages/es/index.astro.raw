@@ -1,0 +1,13 @@
+---
+force: false
+---
+---
+import BaseLayout from '@/layouts/base-layout.astro';
+import Features from '@/components/features.astro';
+import Hero from '@/components/hero.astro';
+---
+
+<BaseLayout>
+  <Hero />
+  <Features />
+</BaseLayout>

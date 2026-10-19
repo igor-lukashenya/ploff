@@ -1,0 +1,29 @@
+---
+force: false
+---
+---
+import { localizePath } from '@/lib/seo';
+import { site } from '@/lib/site';
+
+const current = Astro.currentLocale ?? site.defaultLocale;
+const pathname = Astro.url.pathname;
+---
+
+<nav aria-label="Language" class="flex items-center gap-2">
+  {site.locales.map((loc) => {
+    const href = localizePath(pathname, current, loc.code);
+    const active = loc.code === current;
+    return (
+      <a
+        href={href}
+        hreflang={loc.lang}
+        class:list={[
+          'text-sm',
+          active ? 'font-semibold text-slate-900' : 'text-slate-500 hover:text-slate-900',
+        ]}
+      >
+        {loc.label}
+      </a>
+    );
+  })}
+</nav>

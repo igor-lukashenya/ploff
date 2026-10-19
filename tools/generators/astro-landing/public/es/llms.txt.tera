@@ -1,0 +1,7 @@
+# {{ site_name }}
+
+> {{ site_name }} es una página de inicio rápida y multilingüe creada con Astro, con optimización para buscadores y contenido listo para IA.
+
+## Páginas
+
+- [Inicio]({{ site_url }}/es/): La página de inicio de {{ site_name }}.

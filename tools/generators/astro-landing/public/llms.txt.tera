@@ -1,0 +1,7 @@
+# {{ site_name }}
+
+> {{ site_name }} is a fast, multilingual landing page built with Astro, with search-engine optimization and AI-ready content built in.
+
+## Pages
+
+- [Home]({{ site_url }}/): The {{ site_name }} home page.

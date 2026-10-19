@@ -1,0 +1,13 @@
+# {{ site_name }}
+
+{{ site_name }} es una página de inicio rápida y multilingüe creada con Astro, con optimización para buscadores y contenido listo para IA.
+
+## Lanza una página de inicio que posiciona y traduce
+
+Un sitio estático de Astro con traducción, optimización para buscadores y contenido listo para IA.
+
+## Características
+
+- **Multilingüe**: Sirve inglés y español de serie; añade un idioma en un paso.
+- **Listo para SEO**: URLs canónicas, hreflang, Open Graph, sitemap y robots.txt.
+- **Amigable con la IA**: llms.txt y HTML semántico limpio para que la IA te cite.
