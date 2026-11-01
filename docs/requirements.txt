@@ -2,4 +2,4 @@
 # MkDocs is capped below 2.0: it removes the plugin/theme system Material depends on.
 # See https://squidfunk.github.io/mkdocs-material/blog/2026/02/18/mkdocs-2.0/
 mkdocs>=1.6.1,<2
-mkdocs-material~=9.7
+mkdocs-material~=9.8
